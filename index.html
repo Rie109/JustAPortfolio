@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quan (Harry) Nguyen | Electrical & Semiconductor Engineer</title>
+  <meta name="description"
+    content="Portfolio of Quan (Harry) Nguyen — Electrical/Semiconductor Engineer specializing in GaN & SiC Power Semiconductors.">
+
+  <!-- Preconnect to Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+
+  <!-- Preload hero background image -->
+  <link rel="preload" as="image" href="assets/Kornblume.webp" type="image/webp" fetchpriority="high">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Ambient Cursor Glow Effect -->
+  <div class="cursor-ambient" id="cursorAmbient" aria-hidden="true"></div>
+
+  <!-- Header / Navigation Bar matching screenshot -->
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Main Navigation">
+      <div class="nav-links" id="navLinks">
+        <a href="#home" class="nav-link active" data-section="home" aria-current="page">Home</a>
+        <a href="#research" class="nav-link" data-section="research">Research/Work</a>
+        <a href="#roadmap" class="nav-link" data-section="roadmap">Roadmap</a>
+        <a href="#publications" class="nav-link" data-section="publications">Publications</a>
+        <a href="#project" class="nav-link" data-section="project">Project</a>
+        <a href="#info" class="nav-link" data-section="info">Info</a>
+      </div>
+      <div class="nav-rail-track" aria-hidden="true">
+        <span class="rail-point rail-point-start"></span>
+        <div class="rail-line">
+          <span class="rail-active-bead" id="railBead"></span>
+        </div>
+        <span class="rail-point rail-point-end"></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO SECTION (Exact replica of user screenshot using Kornblume.jpg) -->
+    <section id="home" class="hero-section">
+      <!-- Background Image with High Priority for LCP -->
+      <div class="hero-backdrop" aria-hidden="true">
+        <picture>
+          <source srcset="assets/Kornblume.webp" type="image/webp">
+          <img src="assets/Kornblume.jpg" alt="Centaurea cyanus Kornblume in deep dark moody bokeh" class="hero-bg-img"
+            fetchpriority="high" decoding="async" width="2400" height="1602">
+        </picture>
+        <div class="hero-vignette-overlay"></div>
+        <div class="hero-bloom-glow"></div>
+      </div>
+
+      <!-- Hero Center Content -->
+      <div class="hero-content">
+        <!-- Top kicker / Category tags -->
+        <p class="hero-kicker">
+          <span>Portfolio</span>
+          <span class="kicker-divider">|</span>
+          <span>GaN/SiC</span>
+          <span class="kicker-divider">|</span>
+          <span>Power Semiconductor</span>
+        </p>
+
+        <!-- Main Title -->
+        <h1 class="hero-name">Quan (Harry) Nguyen</h1>
+
+        <!-- Subtitle -->
+        <p class="hero-profession">Electrical/Semiconductor Engineer</p>
+
+        <!-- Tagline / Botanical Quote -->
+        <p class="hero-quote">
+          <span class="botanical-species">Centaurea cyanus</span>
+          <span class="em-dash">—</span>
+          <span class="quote-tail">precision in another form.</span>
+        </p>
+      </div>
+
+      <!-- Subtle Scroll Indicator -->
+      <a href="#research" class="scroll-hint" aria-label="Scroll to Research and Work section">
+        <span class="scroll-hint-line"></span>
+      </a>
+    </section>
+
+    <!-- ==========================================================================
+         RESEARCH / WORK SECTION (Expand-on-Hover Flex Accordion)
+         4 full-screen columns side by side:
+         - Card 01: University of Cincinnati
+         - Card 02: NYCU x Foxconn (top: nycu_main.png, bottom: foxconn.png)
+         - Card 03: Placeholder (dark Kornblume, grey 03., vertical Coming Soon)
+         - Card 04: Placeholder (dark Kornblume, grey 04., vertical Coming Soon)
+         Hover: pushes sibling cards and expands hovered card (Hexagon Circle style)
+         Click: locks card and expands to full high-contrast white technical dossier
+         ========================================================================== -->
+    <section id="research" class="research-fullscreen-section" aria-label="Research and Work Experience">
+      <!-- 4 Expanding Cards Strip across Full Screen -->
+      <div class="work-accordion-strip" id="workStrip">
+
+        <!-- ================= CARD 01: UCincy ================= -->
+        <article class="expand-card card-ucincy-theme" data-col="1" id="cardCol1" tabindex="0" role="region"
+          aria-label="01. University of Cincinnati">
+          <!-- Persistent Background for Card 01 -->
+          <div class="card-bg-wrap">
+            <img src="assets/Ucincy.png" alt="University of Cincinnati Campus" class="card-bg-img" loading="lazy">
+            <div class="card-bg-overlay"></div>
+          </div>
+
+          <!-- Collapsed Face -->
+          <div class="card-face-collapsed">
+            <span class="card-num">01.</span>
+            <div class="card-vtext-wrap">
+              <span class="card-vtext vtext-left">UCincy '30</span>
+              <span class="card-vtext vtext-right">Electrical Engineering</span>
+            </div>
+            <span class="card-tab-label">UCincy '30 • Electrical Engineering</span>
+            <div class="card-highlight-badge" aria-hidden="true"><span>Click to explore</span> <span class="badge-arrow">→</span></div>
+          </div>
+
+          <!-- Expanded Face (Dark Semi-Transparent Blur + Crisp Off-White Info) -->
+          <div class="card-face-expanded" id="dossier1">
+            <button type="button" class="card-close-btn" aria-label="Collapse card" data-close="1">✕</button>
+            <div class="card-dossier-layout">
+              <!-- Left Column: Technical Dossier -->
+              <div class="dossier-text-col">
+                <span class="dossier-bignum">01.</span>
+                <h3 class="dossier-title">University of Cincinnati</h3>
+                <p class="dossier-subtitle">College of Engineering and Applied Science • B.S. Electrical Engineering ('30)</p>
+
+                <div class="dossier-info-list">
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Bachelor of Science in Electrical Engineering (Class of 2030)</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Foundational specialization in Solid-State Devices, Semiconductor Device Physics, and Electromagnetics</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Core Coursework: Semiconductor Physics, Signals & Systems, Electronic Circuit Design, Microelectronic Fabrication, Linear Systems</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Laboratory practice: Analog & digital circuit characterization, high-voltage oscilloscopes, and signal diagnostics</p>
+                  </div>
+                </div>
+
+                <div class="dossier-projects-block">
+                  <h4 class="dossier-section-heading">Key Focus Areas</h4>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>Solid-State Electronics:</strong> Carrier transport dynamics, PN/Schottky junction modeling, and energy band structures</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>Embedded Instrumentation:</strong> Automated data collection pipelines for semiconductor lab testbenches</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: 2 Stacked Rounded Photo Cards -->
+              <div class="dossier-media-col">
+                <div class="dossier-photo-card">
+                  <img src="assets/Ucincy.png" alt="University of Cincinnati Campus Aerial" class="dossier-photo-img" loading="lazy">
+                </div>
+                <div class="dossier-photo-card">
+                  <img src="assets/ucincy-detail.png" alt="University of Cincinnati Engineering Complex" class="dossier-photo-img" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================= CARD 02: NYCU x Foxconn ================= -->
+        <article class="expand-card card-nycu-theme" data-col="2" id="cardCol2" tabindex="0" role="region"
+          aria-label="02. NYCU x Foxconn Research Institute">
+          <!-- Persistent Background: Split NYCU & Foxconn with WebGL Sine Wave overlay -->
+          <div class="card-bg-wrap">
+            <div class="card-split-bg">
+              <div class="split-half top">
+                <img src="assets/nycu_main.png" alt="National Yang Ming Chiao Tung University (NYCU)" class="card-bg-img" loading="lazy">
+              </div>
+              <div class="split-half bottom">
+                <img src="assets/foxconn.png" alt="Foxconn Building" class="card-bg-img" loading="lazy">
+              </div>
+            </div>
+
+            <!-- WebGL Sine Wave Canvas (Transparent background, Tone of Kornblume) -->
+            <canvas id="nycuWaveCanvas" class="card-wave-canvas"></canvas>
+
+            <!-- Subtle atmospheric dark vignette for contrast -->
+            <div class="card-bg-overlay card-nycu-overlay"></div>
+          </div>
+
+          <!-- Collapsed Face -->
+          <div class="card-face-collapsed">
+            <span class="card-num">02.</span>
+            <div class="card-vtext-wrap">
+              <span class="card-vtext vtext-left">NYCU x Foxconn</span>
+              <span class="card-vtext vtext-right">Semiconductor</span>
+            </div>
+            <span class="card-tab-label">NYCU x Foxconn • Semiconductor</span>
+            <div class="card-highlight-badge" aria-hidden="true"><span>Click to explore</span> <span class="badge-arrow">→</span></div>
+          </div>
+
+          <!-- Expanded Face (Blurred Sine Wave Background + Pure White Info) -->
+          <div class="card-face-expanded" id="dossier2">
+            <button type="button" class="card-close-btn" aria-label="Collapse card" data-close="2">✕</button>
+            <div class="card-dossier-layout">
+              <!-- Left Column: Technical Dossier -->
+              <div class="dossier-text-col">
+                <span class="dossier-bignum">02.</span>
+                <h3 class="dossier-title">NYCU x Foxconn Research Institute</h3>
+                <p class="dossier-subtitle">Joint Semiconductor Research Program • Advanced Power Device Group</p>
+
+                <div class="dossier-info-list">
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Joint research program between National Yang Ming Chiao Tung University (NYCU) & Foxconn Semiconductor Research Center</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Focusing on Wide-Bandgap Power Semiconductor Devices, GaN HEMT Breakdown Characterization, and High-Voltage SiC Power Modules</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Investigating dynamic on-resistance (R<sub>DS(on)</sub>) degradation, trap-assisted current collapse, and field-plate optimization</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Utilizing Sentaurus TCAD numerical simulation, high-voltage pulsed I-V characterization, and double-pulse switching testbenches</p>
+                  </div>
+                </div>
+
+                <div class="dossier-projects-block">
+                  <h4 class="dossier-section-heading">Projects</h4>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>GaN Power Device Characterization:</strong> Analyzed trapping kinetics and gate lag in AlGaN/GaN HEMTs under high electric field stress</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>1200V SiC Power MOSFET Switching Reliability:</strong> Conducted double-pulse tests and thermal impedance evaluations to characterize body-diode degradation</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: 2 Stacked Rounded Photo Cards -->
+              <div class="dossier-media-col">
+                <div class="dossier-photo-card">
+                  <img src="assets/nycu_main.png" alt="National Yang Ming Chiao Tung University (NYCU) Engineering Building" class="dossier-photo-img" loading="lazy">
+                </div>
+                <div class="dossier-photo-card">
+                  <img src="assets/foxconn.png" alt="Foxconn Semiconductor Research Center Building" class="dossier-photo-img" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================= CARD 03: Placeholder (media_1793551656530_ad76e50d) ================= -->
+        <article class="expand-card card-placeholder-theme" data-col="3" id="cardCol3" tabindex="0" role="region"
+          aria-label="03. Coming Soon">
+          <!-- Persistent Background -->
+          <div class="card-bg-wrap">
+            <img src="assets/Kornblume.jpg" alt="Dark moody botanical background" class="card-bg-img" loading="lazy">
+            <div class="card-bg-overlay"></div>
+            <div class="placeholder-bokeh" aria-hidden="true"></div>
+          </div>
+
+          <!-- Collapsed Face -->
+          <div class="card-face-collapsed">
+            <span class="card-num">03.</span>
+            <span class="card-vtext-comingsoon">Comming Soon</span>
+            <span class="card-tab-label">03. Comming Soon</span>
+            <div class="card-highlight-badge" aria-hidden="true"><span>Click to preview</span> <span class="badge-arrow">→</span></div>
+          </div>
+
+          <!-- Expanded Face -->
+          <div class="card-face-expanded" id="dossier3">
+            <button type="button" class="card-close-btn" aria-label="Collapse card" data-close="3">✕</button>
+            <div class="card-dossier-layout">
+              <div class="dossier-text-col">
+                <span class="dossier-bignum">03.</span>
+                <h3 class="dossier-title">Asteraceae & Crystalline Lattices</h3>
+                <p class="dossier-subtitle">Upcoming Research Track • Power Semiconductor & Botanical Precision</p>
+
+                <div class="dossier-info-list">
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Next-phase exploration in wide-bandgap GaN/SiC power topologies and symmetry-driven physical structures</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Centaurea cyanus (Kornblume) — structural botanical architecture reflecting hexagonal wurtzite crystal systems</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Documentation, laboratory datasets, and TCAD models currently being finalized for publication</p>
+                  </div>
+                </div>
+
+                <div class="dossier-projects-block">
+                  <h4 class="dossier-section-heading">Planned Releases</h4>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>1.2 kW Bidirectional GaN DC-DC Converter:</strong> Dual active bridge topology achieving 98.4% peak efficiency</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>Parasitic Inductance Minimization:</strong> Ultra-compact switching loops to suppress dv/dt overshoot</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dossier-media-col">
+                <div class="dossier-photo-card">
+                  <img src="assets/Kornblume.jpg" alt="Centaurea cyanus Botanical Portrait" class="dossier-photo-img" loading="lazy">
+                </div>
+                <div class="dossier-photo-card">
+                  <img src="assets/kornblume-macro.jpg" alt="Organic Symmetry & Precision Form" class="dossier-photo-img" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================= CARD 04: Placeholder (media_1793551656530_ad76e50d) ================= -->
+        <article class="expand-card card-placeholder-theme" data-col="4" id="cardCol4" tabindex="0" role="region"
+          aria-label="04. Coming Soon">
+          <!-- Persistent Background -->
+          <div class="card-bg-wrap">
+            <img src="assets/Kornblume.jpg" alt="Dark moody botanical background" class="card-bg-img" loading="lazy">
+            <div class="card-bg-overlay"></div>
+            <div class="placeholder-bokeh" aria-hidden="true"></div>
+          </div>
+
+          <!-- Collapsed Face -->
+          <div class="card-face-collapsed">
+            <span class="card-num">04.</span>
+            <span class="card-vtext-comingsoon">Comming Soon</span>
+            <span class="card-tab-label">04. Comming Soon</span>
+            <div class="card-highlight-badge" aria-hidden="true"><span>Click to preview</span> <span class="badge-arrow">→</span></div>
+          </div>
+
+          <!-- Expanded Face -->
+          <div class="card-face-expanded" id="dossier4">
+            <button type="button" class="card-close-btn" aria-label="Collapse card" data-close="4">✕</button>
+            <div class="card-dossier-layout">
+              <div class="dossier-text-col">
+                <span class="dossier-bignum">04.</span>
+                <h3 class="dossier-title">Carduoideae & Next-Gen Packaging</h3>
+                <p class="dossier-subtitle">Upcoming Research Track • Thermal Dissipation & Biomimetic Packaging</p>
+
+                <div class="dossier-info-list">
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Exploration into ultra-wide-bandgap (UWBG) materials including Gallium Oxide (Ga<sub>2</sub>O<sub>3</sub>) and Diamond</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">Direct-bonded copper (DBC), sintered-silver die attach, and biomimetic microchannel cooling manifolds</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc">High-temperature reverse bias (HTRB) testing and cyclic thermal fatigue simulations</p>
+                  </div>
+                </div>
+
+                <div class="dossier-projects-block">
+                  <h4 class="dossier-section-heading">Planned Releases</h4>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>Edge-Termination TCAD Optimization:</strong> Multi-guard-ring field plate structures reaching 94% ideal 1D breakdown</p>
+                  </div>
+                  <div class="dossier-info-item">
+                    <span class="dossier-bullet">•</span>
+                    <p class="dossier-desc"><strong>Thermomechanical Stress Modeling:</strong> Finite-element analysis of solder degradation under aggressive thermal cycling</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dossier-media-col">
+                <div class="dossier-photo-card">
+                  <img src="assets/Kornblume.jpg" alt="Cornflower Floral Bokeh & Geometric Precision" class="dossier-photo-img" loading="lazy">
+                </div>
+                <div class="dossier-photo-card">
+                  <img src="assets/kornblume-lattice.jpg" alt="Kornblume — Precision in Another Form" class="dossier-photo-img" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         ROADMAP SECTION (Vertical Rotary Wheel Timeline + Details & Summary Viewer)
+         Milestones from 2024 to 2030+ with Kornblume Botanical Visuals
+         ========================================================================== -->
+    <section id="roadmap" class="content-section roadmap-section" aria-label="Career and Academic Roadmap">
+      <div class="roadmap-header-wrap">
+        <header class="section-header">
+          <p class="section-pretitle">02 / CAREER TRAJECTORY & MILESTONES</p>
+          <h2 class="section-title">Career Roadmap (2024 – 2030+)</h2>
+          <p class="section-subtitle">
+            Interactive chronological roadmap spanning high school foundations, semiconductor research at NYCU & Foxconn,
+            embedded security challenges, DAAD RISE Germany fellowships, and ultra-wide-bandgap frontiers.
+          </p>
+          <div class="section-rule"></div>
+        </header>
+      </div>
+
+      <!-- Main Roadmap Split: Rotary Clock Wheel Flush to Left Tab Wall + Aligned Dossier & Right Topic Picker -->
+      <div class="roadmap-layout">
+        <!-- LEFT: Semicircular Rotary Wheel (Pivoting directly on the left window edge) -->
+        <div class="roadmap-wheel-column" aria-label="Milestone Selection Wheel">
+          <div class="wheel-stage">
+            <!-- SVG Clock Face with Radial Graduation Ticks -->
+            <svg id="clockTicksSvg" class="wheel-clock-svg" viewBox="-270 -270 540 540" aria-hidden="true"></svg>
+
+            <!-- Center Pivot Dot on the Left Tab Edge -->
+            <div class="wheel-center-pivot" aria-hidden="true"></div>
+
+            <div class="cards-container">
+              <ul class="cards" style="--items: 7;">
+                <!-- 0: 2024 -->
+                <li style="--i: 0;">
+                  <input type="radio" id="wheel-year-0" name="wheel-year" value="0" checked aria-label="Year 2024">
+                  <label for="wheel-year-0">
+                    <span class="wheel-label-year">2024</span>
+                  </label>
+                </li>
+                <!-- 1: 2025 -->
+                <li style="--i: 1;">
+                  <input type="radio" id="wheel-year-1" name="wheel-year" value="1" aria-label="Year 2025">
+                  <label for="wheel-year-1">
+                    <span class="wheel-label-year">2025</span>
+                  </label>
+                </li>
+                <!-- 2: 2026 -->
+                <li style="--i: 2;">
+                  <input type="radio" id="wheel-year-2" name="wheel-year" value="2" aria-label="Year 2026">
+                  <label for="wheel-year-2">
+                    <span class="wheel-label-year">2026</span>
+                  </label>
+                </li>
+                <!-- 3: 2027 -->
+                <li style="--i: 3;">
+                  <input type="radio" id="wheel-year-3" name="wheel-year" value="3" aria-label="Year 2027">
+                  <label for="wheel-year-3">
+                    <span class="wheel-label-year">2027</span>
+                  </label>
+                </li>
+                <!-- 4: 2028 -->
+                <li style="--i: 4;">
+                  <input type="radio" id="wheel-year-4" name="wheel-year" value="4" aria-label="Year 2028">
+                  <label for="wheel-year-4">
+                    <span class="wheel-label-year">2028</span>
+                  </label>
+                </li>
+                <!-- 5: 2029 -->
+                <li style="--i: 5;">
+                  <input type="radio" id="wheel-year-5" name="wheel-year" value="5" aria-label="Year 2029">
+                  <label for="wheel-year-5">
+                    <span class="wheel-label-year">2029</span>
+                  </label>
+                </li>
+                <!-- 6: 2030+ -->
+                <li style="--i: 6;">
+                  <input type="radio" id="wheel-year-6" name="wheel-year" value="6" aria-label="Year 2030+">
+                  <label for="wheel-year-6">
+                    <span class="wheel-label-year">2030+</span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Fixed 3 O'Clock Alignment Pointer Indicator pointing towards Card -->
+            <div class="wheel-pointer-indicator" aria-hidden="true">
+              <span class="pointer-track-line"></span>
+              <span class="pointer-arrow">►</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Display Card (Left: Info Display Dossier, Right: Topic Picking + Kornblume Visual) -->
+        <div class="roadmap-viewer-column">
+          <div class="roadmap-viewer-card" id="roadmapViewerCard">
+            <!-- LEFT PANEL: Clean Info Display (Aligned, Clear Unobstructed View) -->
+            <div class="roadmap-info-panel">
+              <div class="viewer-milestone-header">
+                <div class="milestone-badge-row">
+                  <span class="active-card-year" id="activeMilestoneYear">2024</span>
+                  <span class="active-card-badge" id="activeMilestoneBadge">Foundational STEM</span>
+                </div>
+                <h3 class="active-card-title" id="activeMilestoneTitle">Nguyen Thuong Hien High School</h3>
+                <p class="active-card-subtitle" id="activeMilestoneSubtitle">STEM Foundations & Physics Olympiad</p>
+              </div>
+
+              <!-- Topic Content Display Area -->
+              <div class="roadmap-active-topic-display">
+                <div class="topic-indicator-tag">
+                  <span class="topic-indicator-dot"></span>
+                  <span class="topic-indicator-name" id="activeTopicName">Details & Summary</span>
+                </div>
+                <div class="topic-content-body">
+                  <p class="topic-desc-text" id="roadmapTopicContent">
+                    Advanced Physics & Mathematics curriculum at Nguyen Thuong Hien High School for the Gifted. Built deep foundational analytical rigor in semiconductor physics, electronic principles, and algorithmic problem-solving for national academic Olympiads.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT PANEL: Topic Picking & Kornblume Botanical Visuals -->
+            <div class="roadmap-picker-panel">
+              <!-- Background Visual Artwork (Switches with active topic) -->
+              <div class="picker-visual-bg" aria-hidden="true">
+                <div class="picker-img-slide active" data-img-topic="0">
+                  <img src="assets/Kornblume.jpg" alt="Botanical artwork — Details & Summary" class="picker-bg-img" loading="lazy">
+                </div>
+                <div class="picker-img-slide" data-img-topic="1">
+                  <img src="assets/kornblume-macro.jpg" alt="Botanical precision — Project Built" class="picker-bg-img" loading="lazy">
+                </div>
+                <div class="picker-img-slide" data-img-topic="2">
+                  <img src="assets/kornblume-lattice.jpg" alt="Crystalline lattice — In future" class="picker-bg-img" loading="lazy">
+                </div>
+                <div class="picker-visual-overlay"></div>
+              </div>
+
+              <!-- Topic Picking Button Stack (Topic Selection on Right Side) -->
+              <div class="topic-picker-container">
+                <span class="topic-picker-label">SELECT TOPIC</span>
+                <div class="topic-pill-group" role="tablist" aria-label="Milestone Topics">
+                  <button type="button" class="topic-pill-tab active" role="tab" aria-selected="true" data-topic="0" id="topicTab0">
+                    <span class="topic-pill-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                    </span>
+                    <span class="topic-pill-title">Details & Summary</span>
+                  </button>
+
+                  <button type="button" class="topic-pill-tab" role="tab" aria-selected="false" data-topic="1" id="topicTab1">
+                    <span class="topic-pill-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
+                    </span>
+                    <span class="topic-pill-title">Project Built</span>
+                  </button>
+
+                  <button type="button" class="topic-pill-tab" role="tab" aria-selected="false" data-topic="2" id="topicTab2">
+                    <span class="topic-pill-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </span>
+                    <span class="topic-pill-title">In future</span>
+                  </button>
+                </div>
+
+                <!-- Topic Stepper Navigation Controls -->
+                <div class="topic-nav-controls">
+                  <button type="button" class="topic-nav-btn prev-topic-btn" id="prevTopicBtn" aria-label="Previous Topic" title="Previous Topic">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+                  </button>
+                  <button type="button" class="topic-nav-btn next-topic-btn" id="nextTopicBtn" aria-label="Next Topic" title="Next Topic">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         PUBLICATIONS SECTION (Peer-Reviewed Papers, Preprints & BibTeX Citations)
+         ========================================================================== -->
+    <section id="publications" class="content-section publications-section" aria-label="Publications and Research Papers">
+      <div class="section-container">
+        <header class="section-header">
+          <p class="section-pretitle">03 / PEER-REVIEWED & TECHNICAL PAPERS</p>
+          <h2 class="section-title">Publications & Research</h2>
+          <p class="section-subtitle">
+            Scientific investigations, conference proceedings, and technical whitepapers in Wide-Bandgap (GaN/SiC)
+            power semiconductors, trapping kinetics, and resilient embedded hardware.
+          </p>
+          <div class="section-rule"></div>
+        </header>
+
+        <!-- Publication Filter Bar -->
+        <div class="pub-filter-bar" role="tablist" aria-label="Publication Categories">
+          <button type="button" class="pub-filter-pill active" data-filter="all" role="tab" aria-selected="true">All Works (4)</button>
+          <button type="button" class="pub-filter-pill" data-filter="gan" role="tab" aria-selected="false">GaN & SiC Power</button>
+          <button type="button" class="pub-filter-pill" data-filter="tcad" role="tab" aria-selected="false">TCAD & Modeling</button>
+          <button type="button" class="pub-filter-pill" data-filter="security" role="tab" aria-selected="false">Hardware Security</button>
+        </div>
+
+        <div class="publications-list">
+          <!-- Publication 1 -->
+          <article class="pub-card" data-category="gan">
+            <div class="pub-card-top">
+              <span class="pub-badge journal">Journal Article • In Review</span>
+              <span class="pub-year">2026</span>
+            </div>
+            <h3 class="pub-title">
+              Dynamic R<sub>DS(on)</sub> Trapping Kinetics and Gate-Lag Degradation in High-Voltage AlGaN/GaN HEMTs Under Severe Electric Field Stress
+            </h3>
+            <p class="pub-authors">
+              <strong>Quan (Harry) Nguyen</strong>, Joint Semiconductor Research Group, Foxconn Semiconductor Research Center & NYCU
+            </p>
+            <p class="pub-venue">
+              <em>IEEE Transactions on Electron Devices (TED)</em> — Manuscript in Peer Review
+            </p>
+
+            <details class="pub-abstract-details">
+              <summary class="pub-abstract-summary">
+                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-arrow">▾</span>
+              </summary>
+              <div class="pub-abstract-content">
+                <p>
+                  High-voltage gallium nitride (GaN) high-electron-mobility transistors (HEMTs) suffer from dynamic on-resistance (R<sub>DS(on)</sub>) degradation induced by electron trapping in buffer layers and surface states during off-state bias. In this work, high-speed double-pulse switching diagnostics and pulsed I-V characterization reveal the activation energies and emission time constants of donor- and acceptor-like traps. A multi-field-plate architecture is proposed and validated through Sentaurus TCAD simulations, achieving a 34% reduction in peak electric field at the gate edge and limiting dynamic R<sub>DS(on)</sub> rise to under 1.18× across 600V switching cycles.
+                </p>
+              </div>
+            </details>
+
+            <div class="pub-actions">
+              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2026dynamic">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Copy BibTeX</span>
+              </button>
+              <a href="#" class="pub-btn pub-btn-link" onclick="alert('Preprint PDF download link will be available upon publication release.'); return false;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Download Preprint (PDF)</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Publication 2 -->
+          <article class="pub-card" data-category="gan">
+            <div class="pub-card-top">
+              <span class="pub-badge conf">Conference Proceeding</span>
+              <span class="pub-year">2026</span>
+            </div>
+            <h3 class="pub-title">
+              Switching Reliability and Body-Diode Degradation in 1.2 kV SiC Power MOSFETs Subjected to Repetitive Double-Pulse Stress
+            </h3>
+            <p class="pub-authors">
+              <strong>Quan (Harry) Nguyen</strong>, Advanced Power Device Group
+            </p>
+            <p class="pub-venue">
+              <em>IEEE Applied Power Electronics Conference and Exposition (APEC 2026)</em>
+            </p>
+
+            <details class="pub-abstract-details">
+              <summary class="pub-abstract-summary">
+                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-arrow">▾</span>
+              </summary>
+              <div class="pub-abstract-content">
+                <p>
+                  Silicon Carbide (SiC) power MOSFETs offer superior critical breakdown field and thermal conductivity for medium-voltage electric vehicle inverters. However, bipolar degradation in the intrinsic body diode caused by stacking faults can degrade forward voltage drop and switching loss over time. This paper presents an automated inductive double-pulse testbench operating at 800V / 40A with real-time junction temperature tracking, evaluating body-diode commutation ruggedness and safe operating area (SOA) boundaries.
+                </p>
+              </div>
+            </details>
+
+            <div class="pub-actions">
+              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2026sic">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Copy BibTeX</span>
+              </button>
+              <a href="#" class="pub-btn pub-btn-link" onclick="alert('Conference proceeding will be indexed on IEEE Xplore.'); return false;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>IEEE Xplore</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Publication 3 -->
+          <article class="pub-card" data-category="tcad">
+            <div class="pub-card-top">
+              <span class="pub-badge conf">Symposium Proceeding</span>
+              <span class="pub-year">2025</span>
+            </div>
+            <h3 class="pub-title">
+              Numerical Field-Plate Optimization and Edge-Termination for Nanoscale High-Breakdown GaN Power Diodes
+            </h3>
+            <p class="pub-authors">
+              <strong>Quan (Harry) Nguyen</strong>, University of Cincinnati & NYCU Joint Semiconductor Lab
+            </p>
+            <p class="pub-venue">
+              <em>IEEE International Symposium on Power Semiconductor Devices and ICs (ISPSD)</em>
+            </p>
+
+            <details class="pub-abstract-details">
+              <summary class="pub-abstract-summary">
+                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-arrow">▾</span>
+              </summary>
+              <div class="pub-abstract-content">
+                <p>
+                  Edge termination efficiency directly dictates reverse blocking capability in vertical and lateral GaN power diodes. Utilizing Silvaco Atlas and Sentaurus TCAD 2D/3D numerical drift-diffusion simulations, junction termination extensions (JTE) combined with sub-micron dual field plates were simulated to smooth electric field crowding at anode perimeters. Experimental simulations demonstrate breakdown voltages exceeding 1400V with 94% junction efficiency.
+                </p>
+              </div>
+            </details>
+
+            <div class="pub-actions">
+              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2025tcad">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Copy BibTeX</span>
+              </button>
+              <a href="#" class="pub-btn pub-btn-link" onclick="alert('ISPSD Paper details and PDF will be linked.'); return false;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Proceedings Link</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Publication 4 -->
+          <article class="pub-card" data-category="security">
+            <div class="pub-card-top">
+              <span class="pub-badge whitepaper">Technical Whitepaper</span>
+              <span class="pub-year">2027</span>
+            </div>
+            <h3 class="pub-title">
+              Hardware Security and Side-Channel Resilience for Microcontroller-Controlled Power Conversion Topologies
+            </h3>
+            <p class="pub-authors">
+              <strong>Quan (Harry) Nguyen</strong>, UC eCTF MITRE Engineering Team
+            </p>
+            <p class="pub-venue">
+              <em>MITRE Embedded System Challenge (eCTF) Technical Whitepaper Series</em>
+            </p>
+
+            <details class="pub-abstract-details">
+              <summary class="pub-abstract-summary">
+                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-arrow">▾</span>
+              </summary>
+              <div class="pub-abstract-content">
+                <p>
+                  As power electronics become tightly coupled with digital communication busses and IoT energy grids, cyber-physical security at the hardware layer is paramount. This whitepaper details physical side-channel power analysis (DPA) countermeasures, cryptographic key protection inside isolated flash sectors, and hardware-enforced memory protection units (MPU) for power converters under malicious firmware injection attacks.
+                </p>
+              </div>
+            </details>
+
+            <div class="pub-actions">
+              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2027security">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Copy BibTeX</span>
+              </button>
+              <a href="#" class="pub-btn pub-btn-link" onclick="alert('MITRE eCTF repository & whitepaper repository.'); return false;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Whitepaper PDF</span>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECT SECTION -->
+    <section id="project" class="content-section">
+      <div class="section-container">
+        <header class="section-header">
+          <p class="section-pretitle">04 / HARDWARE & SIMULATION</p>
+          <h2 class="section-title">Featured Projects</h2>
+          <div class="section-rule"></div>
+        </header>
+
+        <div class="project-grid">
+          <!-- Project 1 -->
+          <div class="project-card">
+            <div class="project-indicator">01</div>
+            <h3 class="project-title">High-Efficiency GaN Bidirectional DC-DC Converter</h3>
+            <p class="project-desc">
+              Designed and verified a 1.2 kW 400V-to-48V GaN-based dual active bridge converter achieving 98.4% peak
+              efficiency with zero-voltage switching (ZVS) under varying load conditions.
+            </p>
+            <div class="project-tech">
+              <span>GaN Systems E-HEMT</span>
+              <span>Altium Designer</span>
+              <span>LTspice</span>
+              <span>PCB Parasitic Extraction</span>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="project-card">
+            <div class="project-indicator">02</div>
+            <h3 class="project-title">Automated Semiconductor Parameter Extraction Suite</h3>
+            <p class="project-desc">
+              Developed a Python-controlled automation framework interfacing with SMUs and LCR meters for
+              high-throughput threshold voltage (<span class="mono">V<sub>th</sub></span>), subthreshold swing, and
+              capacitance-voltage (C-V) extraction.
+            </p>
+            <div class="project-tech">
+              <span>Python (PyVISA)</span>
+              <span>SCPI Instrumentation</span>
+              <span>Data Analysis</span>
+              <span>Matplotlib / NumPy</span>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="project-card">
+            <div class="project-indicator">03</div>
+            <h3 class="project-title">Nanoscale GaN Power Diode TCAD Optimization</h3>
+            <p class="project-desc">
+              Multi-parameter numerical simulation of edge-termination structures (junction termination extensions &
+              field rings) to suppress peak surface electric fields, reaching 94% of ideal 1D breakdown.
+            </p>
+            <div class="project-tech">
+              <span>Silvaco Atlas</span>
+              <span>Bandgap Engineering</span>
+              <span>Electric Field Mapping</span>
+              <span>Impact Ionization</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INFO / CONTACT SECTION -->
+    <section id="info" class="content-section">
+      <div class="section-container">
+        <header class="section-header">
+          <p class="section-pretitle">05 / PROFILE & CONTACT</p>
+          <h2 class="section-title">Information</h2>
+          <div class="section-rule"></div>
+        </header>
+
+        <div class="info-split">
+          <div class="info-bio">
+            <h3 class="bio-name">Quan (Harry) Nguyen</h3>
+            <p class="bio-subtitle">Electrical / Semiconductor Engineer</p>
+            <p class="bio-body">
+              Passionate about wide-bandgap materials, power semiconductor physics, and advancing energy-dense
+              electronic systems. Dedicated to bridging the gap between physical device fabrication, characterization,
+              and high-frequency power electronics design.
+            </p>
+            <div class="skills-block">
+              <h4 class="skills-heading">Technical Competencies</h4>
+              <div class="skill-pills">
+                <span class="skill-pill">GaN & SiC Device Physics</span>
+                <span class="skill-pill">Sentaurus TCAD / Silvaco</span>
+                <span class="skill-pill">High-Voltage Characterization</span>
+                <span class="skill-pill">Power Electronics & Converters</span>
+                <span class="skill-pill">Altium PCB Layout</span>
+                <span class="skill-pill">Keysight B1500/B1505 SMU</span>
+                <span class="skill-pill">Python Automation (PyVISA)</span>
+                <span class="skill-pill">Cleanroom Fabrication Basics</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-connect">
+            <div class="connect-box">
+              <h4 class="connect-heading">Get in Touch</h4>
+              <p class="connect-text">Open to semiconductor research roles, hardware engineering opportunities, and
+                technical collaborations.</p>
+
+              <ul class="contact-links">
+                <li>
+                  <span class="link-label">Email</span>
+                  <a href="mailto:contact@harrynguyen.dev" class="link-value">contact@harrynguyen.dev</a>
+                </li>
+                <li>
+                  <span class="link-label">LinkedIn</span>
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+                    class="link-value">linkedin.com/in/quan-harry-nguyen</a>
+                </li>
+                <li>
+                  <span class="link-label">Scholar / Research</span>
+                  <a href="#" class="link-value">Google Scholar Profile</a>
+                </li>
+                <li>
+                  <span class="link-label">Location</span>
+                  <span class="link-value plain">Semiconductor Hub</span>
+                </li>
+              </ul>
+
+              <div class="action-buttons">
+                <a href="#home" class="btn-primary">Back to Top ↑</a>
+                <a href="#" class="btn-secondary"
+                  onclick="alert('You can link your resume PDF here.'); return false;">Download Resume (CV)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="site-footer">
+          <p>© 2026 Quan (Harry) Nguyen. Centaurea cyanus — precision in another form.</p>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <!-- vertexShader for NYCU x Foxconn Sine Wave -->
+  <script id="js-vertex-shader" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main() {
+  gl_Position = vec4(position, 1.0);
+}
+  </script>
+
+  <!-- fragmentShader with sine wave logic (Tone of Kornblume) -->
+  <script id="js-fragment-shader" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 resolution;
+uniform float time;
+uniform float xScale;
+uniform float yScale;
+uniform float distortion;
+
+void main() {
+  vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+  
+  float d = length(p) * distortion;
+  
+  float rx = p.x * (1.0 + d);
+  float gx = p.x;
+  float bx = p.x * (1.0 - d);
+
+  float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
+  float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
+  float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
+
+  // Kornblume Color Spectrum:
+  vec3 kornblumeAzure = vec3(0.20, 0.55, 1.0);  // Vivid Kornblume azure
+  vec3 cyanHighlight  = vec3(0.38, 0.88, 1.0);  // Electric cyan
+  vec3 coreWhite      = vec3(1.0, 1.0, 1.0);     // High-energy white core
+
+  vec3 waveCol = r * vec3(0.32, 0.22, 0.85)
+               + g * cyanHighlight * 0.90
+               + b * kornblumeAzure * 1.55;
+
+  float intensity = (r + g + b) * 0.333;
+  if (intensity > 0.85) {
+    waveCol = mix(waveCol, coreWhite, clamp((intensity - 0.85) * 0.75, 0.0, 1.0));
+  }
+
+  // Alpha transparency: only the glowing sine wave has opacity,
+  // allowing the NYCU and Foxconn architecture to clearly show through!
+  float alpha = clamp(max(max(r, g), b) * 1.5, 0.0, 0.95);
+
+  gl_FragColor = vec4(waveCol, alpha);
+}
+  </script>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
