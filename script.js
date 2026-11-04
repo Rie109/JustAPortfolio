@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let crtBootTimer = null;
   let crtTurnOnTimer = null;
   let crtRevealTimer = null;
+  let crtFallbackTimer = null;
 
   function playCard2BootSequence() {
     const card2 = document.getElementById('cardCol2');
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (crtBootTimer) clearTimeout(crtBootTimer);
     if (crtTurnOnTimer) clearTimeout(crtTurnOnTimer);
     if (crtRevealTimer) clearTimeout(crtRevealTimer);
+    if (crtFallbackTimer) clearTimeout(crtFallbackTimer);
 
     if (tvOverlay) tvOverlay.classList.remove('is-tv-on');
 
@@ -121,14 +123,21 @@ document.addEventListener('DOMContentLoaded', () => {
       startStaticNoise();
     }
 
+    // Safety fallback: Scrolly layout NEVER stays hidden after 1.5s
+    crtFallbackTimer = setTimeout(() => {
+      if (shellLayout) shellLayout.classList.remove('is-pre-ignition');
+      if (bootScreen) bootScreen.classList.remove('is-booting', 'is-fading');
+      stopStaticNoise();
+    }, 1500);
+
     // Step 2: After blinking ~2-3 times across 1.25s, stop static & play CRT ignition
     crtTurnOnTimer = setTimeout(() => {
+      stopStaticNoise();
+
       if (!card2 || !card2.classList.contains('is-locked-card')) {
-        stopStaticNoise();
+        if (shellLayout) shellLayout.classList.remove('is-pre-ignition');
         return;
       }
-
-      stopStaticNoise();
 
       if (bootScreen) {
         bootScreen.classList.remove('is-booting');
@@ -162,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (crtBootTimer) { clearTimeout(crtBootTimer); crtBootTimer = null; }
     if (crtTurnOnTimer) { clearTimeout(crtTurnOnTimer); crtTurnOnTimer = null; }
     if (crtRevealTimer) { clearTimeout(crtRevealTimer); crtRevealTimer = null; }
+    if (crtFallbackTimer) { clearTimeout(crtFallbackTimer); crtFallbackTimer = null; }
     const bootScreen = document.getElementById('crtBootScreen');
     const tvOverlay = document.getElementById('crtTvTurnOn');
     const shellLayout = document.getElementById('scrollyShellLayout');
@@ -172,7 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function lockCard(targetCard) {
     if (!workStrip || !targetCard) return;
-    if (targetCard.classList.contains('is-locked-card')) return; // Run ONLY ONCE when selecting a card
+    if (targetCard.classList.contains('is-locked-card')) {
+      if (targetCard.id === 'cardCol2') {
+        const shellLayout = document.getElementById('scrollyShellLayout');
+        if (shellLayout) shellLayout.classList.remove('is-pre-ignition');
+      }
+      return; // Run ONLY ONCE when selecting a card
+    }
 
     expandCards.forEach((c) => {
       const badges = c.querySelectorAll('.gold-shine-badge');
@@ -230,12 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (workStrip) workStrip.classList.remove('has-hover-expanded');
   }
 
-  // Safe zone protection: The header height + generous safety margin so navigation
-  // and cursor movements across the top of the viewport NEVER trigger cards underneath
+  // Safe zone protection: The header height + margin so navigation
+  // and cursor movements across the top of the viewport NEVER trigger cards underneath,
+  // capped at 115px max so it never invades the card content area
   function isInHeaderSafeZone(e) {
     if (!e) return false;
-    const headerBottom = header ? header.getBoundingClientRect().bottom : 80;
-    return e.clientY <= Math.max(headerBottom + 45, 125);
+    const headerBottom = header ? Math.min(header.getBoundingClientRect().bottom, 80) : 80;
+    return e.clientY <= Math.min(headerBottom + 35, 115);
   }
 
   // Ensure header interactions never trigger or maintain card expansions
@@ -300,7 +317,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isInHeaderSafeZone(e)) {
         return;
       }
-      if (card.classList.contains('is-locked-card')) return; // Already locked, do not re-run!
+      if (card.classList.contains('is-locked-card')) {
+        if (card.id === 'cardCol2') {
+          const shellLayout = document.getElementById('scrollyShellLayout');
+          if (shellLayout) shellLayout.classList.remove('is-pre-ignition');
+        }
+        return;
+      }
       clearHoverExpansion();
       lockCard(card);
     });

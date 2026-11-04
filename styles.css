@@ -154,9 +154,22 @@ body {
   height: 18px;
 }
 
+.kornblume-svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  display: block !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
 .rail-point {
   width: 13px;
   height: 13px;
+  max-width: 13px;
+  max-height: 13px;
+  overflow: hidden;
   border-radius: 0;
   background: none;
   box-shadow: none;
@@ -176,10 +189,13 @@ body {
 }
 
 .rail-point svg,
-.rail-active-bead svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+.rail-point .kornblume-svg {
+  width: 13px !important;
+  height: 13px !important;
+  max-width: 13px !important;
+  max-height: 13px !important;
+  display: block !important;
+  overflow: hidden;
 }
 
 .rail-line {
@@ -197,6 +213,9 @@ body {
   left: 0;
   width: 18px;
   height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  overflow: hidden;
   border-radius: 0;
   background: none;
   box-shadow: none;
@@ -209,6 +228,16 @@ body {
   transition: left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   pointer-events: none;
   animation: kornblumeBreathe 3.5s ease-in-out infinite;
+}
+
+.rail-active-bead svg,
+.rail-active-bead .kornblume-svg {
+  width: 18px !important;
+  height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  display: block !important;
+  overflow: hidden;
 }
 
 @keyframes kornblumeBreathe {
@@ -4117,6 +4146,9 @@ body {
   position: relative;
   z-index: 2;
   background: transparent;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease;
 }
 
 /* ==========================================================================
