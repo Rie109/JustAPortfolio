@@ -18,16 +18,186 @@ document.addEventListener('DOMContentLoaded', () => {
   const expandCards = document.querySelectorAll('.expand-card');
   const cardCloseBtns = document.querySelectorAll('.card-close-btn');
 
+  let crtStaticAnimId = null;
+  function startStaticNoise() {
+    const canvas = document.getElementById('crtStaticCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    if (crtStaticAnimId) cancelAnimationFrame(crtStaticAnimId);
+
+    // 480x270 buffer for authentic VHS / CRT TV tracking static
+    const w = 480;
+    const h = 270;
+    canvas.width = w;
+    canvas.height = h;
+    const imgData = ctx.createImageData(w, h);
+    const data = imgData.data;
+
+    function renderStatic() {
+      // Clear to deep black (#000000)
+      data.fill(0);
+      for (let i = 3; i < data.length; i += 4) {
+        data[i] = 255;
+      }
+
+      // 1. Very subtle random baseline flecks (0 to 10 brightness)
+      const numBase = (w * h * 0.012) | 0;
+      for (let n = 0; n < numBase; n++) {
+        const idx = ((Math.random() * (w * h)) | 0) * 4;
+        const v = (Math.random() * 10 + 2) | 0;
+        data[idx] = v;
+        data[idx + 1] = v;
+        data[idx + 2] = v;
+      }
+
+      // 2. Sparse horizontal tracking glitch clusters (matching user reference image)
+      const numClusters = (Math.random() * 10 + 14) | 0;
+      for (let c = 0; c < numClusters; c++) {
+        const cy = (Math.random() * h) | 0;
+        const cx = (Math.random() * (w - 35)) | 0;
+        const clusterWidth = (Math.random() * 28 + 6) | 0;
+        const clusterHeight = Math.random() < 0.76 ? 1 : 2;
+        const baseV = Math.random() < 0.82 ? ((Math.random() * 45 + 20) | 0) : ((Math.random() * 85 + 60) | 0);
+
+        for (let dy = 0; dy < clusterHeight; dy++) {
+          const y = cy + dy;
+          if (y >= h) break;
+          for (let dx = 0; dx < clusterWidth; dx++) {
+            const x = cx + dx;
+            if (x >= w) break;
+            if (Math.random() < 0.68) {
+              const idx = (y * w + x) * 4;
+              const v = Math.min(255, Math.max(0, baseV + ((Math.random() * 20 - 10) | 0)));
+              data[idx] = v;
+              data[idx + 1] = v;
+              data[idx + 2] = v;
+            }
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+      crtStaticAnimId = requestAnimationFrame(renderStatic);
+    }
+    renderStatic();
+  }
+
+  function stopStaticNoise() {
+    if (crtStaticAnimId) {
+      cancelAnimationFrame(crtStaticAnimId);
+      crtStaticAnimId = null;
+    }
+  }
+
+  let crtBootTimer = null;
+  let crtTurnOnTimer = null;
+  let crtRevealTimer = null;
+
+  function playCard2BootSequence() {
+    const card2 = document.getElementById('cardCol2');
+    const bootScreen = document.getElementById('crtBootScreen');
+    const tvOverlay = document.getElementById('crtTvTurnOn');
+    const shellLayout = document.getElementById('scrollyShellLayout');
+
+    // Clear any previous running sequence
+    if (crtBootTimer) clearTimeout(crtBootTimer);
+    if (crtTurnOnTimer) clearTimeout(crtTurnOnTimer);
+    if (crtRevealTimer) clearTimeout(crtRevealTimer);
+
+    if (tvOverlay) tvOverlay.classList.remove('is-tv-on');
+
+    // Step 1: Make Card 02 empty inside while expanding
+    if (shellLayout) {
+      shellLayout.classList.add('is-pre-ignition');
+    }
+
+    // Trigger TV static screen & white/grey blinking "NYCU x HHRI" (Arcade Boot Style)
+    if (bootScreen) {
+      bootScreen.classList.remove('is-booting', 'is-fading');
+      void bootScreen.offsetWidth; // Force CSS animation restart
+      bootScreen.classList.add('is-booting');
+      startStaticNoise();
+    }
+
+    // Step 2: After blinking ~2-3 times across 1.25s, stop static & play CRT ignition
+    crtTurnOnTimer = setTimeout(() => {
+      if (!card2 || !card2.classList.contains('is-locked-card')) {
+        stopStaticNoise();
+        return;
+      }
+
+      stopStaticNoise();
+
+      if (bootScreen) {
+        bootScreen.classList.remove('is-booting');
+        bootScreen.classList.add('is-fading');
+      }
+
+      if (tvOverlay) {
+        tvOverlay.classList.remove('is-tv-on');
+        void tvOverlay.offsetWidth; // Force reflow
+        tvOverlay.classList.add('is-tv-on');
+      }
+
+      // Step 3: Reveal card content as CRT beam flashes across
+      crtRevealTimer = setTimeout(() => {
+        if (shellLayout) {
+          shellLayout.classList.remove('is-pre-ignition');
+        }
+        if (bootScreen) {
+          bootScreen.classList.remove('is-fading');
+        }
+      }, 180);
+
+      if (typeof window.resizeNycuCanvas === 'function') {
+        window.resizeNycuCanvas();
+      }
+    }, 1250);
+  }
+
+  function resetCard2BootSequence() {
+    stopStaticNoise();
+    if (crtBootTimer) { clearTimeout(crtBootTimer); crtBootTimer = null; }
+    if (crtTurnOnTimer) { clearTimeout(crtTurnOnTimer); crtTurnOnTimer = null; }
+    if (crtRevealTimer) { clearTimeout(crtRevealTimer); crtRevealTimer = null; }
+    const bootScreen = document.getElementById('crtBootScreen');
+    const tvOverlay = document.getElementById('crtTvTurnOn');
+    const shellLayout = document.getElementById('scrollyShellLayout');
+    if (bootScreen) bootScreen.classList.remove('is-booting', 'is-fading');
+    if (tvOverlay) tvOverlay.classList.remove('is-tv-on');
+    if (shellLayout) shellLayout.classList.remove('is-pre-ignition');
+  }
+
   function lockCard(targetCard) {
     if (!workStrip || !targetCard) return;
+    if (targetCard.classList.contains('is-locked-card')) return; // Run ONLY ONCE when selecting a card
 
     expandCards.forEach((c) => {
+      const badges = c.querySelectorAll('.gold-shine-badge');
       if (c === targetCard) {
         c.classList.add('is-locked-card');
         c.setAttribute('aria-expanded', 'true');
+        // Trigger the LED/neon turning on animation when card expands
+        badges.forEach((badge) => {
+          badge.classList.remove('is-neon-on');
+          requestAnimationFrame(() => badge.classList.add('is-neon-on'));
+        });
+
+        // Trigger CRT Pre-Ignition & Power-On Sequence for Card 02 (NYCU x Foxconn)
+        if (c.id === 'cardCol2') {
+          playCard2BootSequence();
+        }
       } else {
         c.classList.remove('is-locked-card');
         c.setAttribute('aria-expanded', 'false');
+        badges.forEach((badge) => {
+          badge.classList.remove('is-neon-on');
+        });
+        if (c.id === 'cardCol2') {
+          resetCard2BootSequence();
+        }
       }
     });
 
@@ -40,7 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
     expandCards.forEach((c) => {
       c.classList.remove('is-locked-card');
       c.setAttribute('aria-expanded', 'false');
+      const badges = c.querySelectorAll('.gold-shine-badge');
+      badges.forEach((badge) => {
+        badge.classList.remove('is-neon-on');
+      });
     });
+    resetCard2BootSequence();
   }
 
   let hoverExpandTimeout = null;
@@ -55,10 +230,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (workStrip) workStrip.classList.remove('has-hover-expanded');
   }
 
+  // Safe zone protection: The header height + generous safety margin so navigation
+  // and cursor movements across the top of the viewport NEVER trigger cards underneath
+  function isInHeaderSafeZone(e) {
+    if (!e) return false;
+    const headerBottom = header ? header.getBoundingClientRect().bottom : 80;
+    return e.clientY <= Math.max(headerBottom + 45, 125);
+  }
+
+  // Ensure header interactions never trigger or maintain card expansions
+  if (header) {
+    header.addEventListener('mouseenter', clearHoverExpansion);
+    header.addEventListener('mousemove', clearHoverExpansion);
+    header.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearHoverExpansion();
+    });
+  }
+
+  // Global protection: whenever pointer is within header safe zone, cancel card hover expansion
+  window.addEventListener('mousemove', (e) => {
+    if (isInHeaderSafeZone(e) && workStrip && !workStrip.classList.contains('is-locked')) {
+      clearHoverExpansion();
+    }
+  }, { passive: true });
+
   expandCards.forEach((card) => {
-    // Intentional hover: only expands after hovering 1-2 seconds
-    card.addEventListener('mouseenter', () => {
+    // Intentional hover: only expands after hovering outside header safe zone
+    card.addEventListener('mouseenter', (e) => {
       if (!workStrip || workStrip.classList.contains('is-locked')) return;
+      if (isInHeaderSafeZone(e)) {
+        clearHoverExpansion();
+        return;
+      }
 
       clearTimeout(hoverExpandTimeout);
       hoverExpandTimeout = setTimeout(() => {
@@ -68,6 +272,14 @@ document.addEventListener('DOMContentLoaded', () => {
           workStrip.classList.add('has-hover-expanded');
         }
       }, HOVER_EXPAND_DELAY_MS);
+    });
+
+    // Continuously monitor mousemove inside the card: if cursor moves up towards the header, cancel immediately
+    card.addEventListener('mousemove', (e) => {
+      if (!workStrip || workStrip.classList.contains('is-locked')) return;
+      if (isInHeaderSafeZone(e)) {
+        clearHoverExpansion();
+      }
     });
 
     card.addEventListener('mouseleave', () => {
@@ -85,6 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Click on card to lock/pin it in place and display full info immediately
     card.addEventListener('click', (e) => {
       if (e.target.closest('.card-close-btn')) return;
+      if (isInHeaderSafeZone(e)) {
+        return;
+      }
+      if (card.classList.contains('is-locked-card')) return; // Already locked, do not re-run!
       clearHoverExpansion();
       lockCard(card);
     });
@@ -114,6 +330,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') {
       unlockAllCards();
     }
+  });
+
+  // ==========================================================================
+  // Gold Award Badge Neon Strike / Replay on Click
+  // ==========================================================================
+  const goldBadges = document.querySelectorAll('.gold-shine-badge');
+  goldBadges.forEach((badge) => {
+    badge.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent accordion card interaction
+      // Re-trigger the LED/neon strike animation
+      badge.classList.remove('is-neon-on');
+      void badge.offsetWidth;
+      badge.classList.add('is-neon-on');
+    });
+  });
+
+  // Prevent Git Keycap button click from bubbling into card lock handlers
+  const gitKeyBtns = document.querySelectorAll('.git-key-button');
+  gitKeyBtns.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
   });
 
   // ==========================================================================
@@ -244,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('nycuWaveCanvas');
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false }) 
+    const gl = canvas.getContext('webgl', { alpha: true, preserveDrawingBuffer: true, premultipliedAlpha: false }) 
             || canvas.getContext('experimental-webgl', { alpha: true, premultipliedAlpha: false });
     if (!gl) return;
 
@@ -273,31 +511,59 @@ document.addEventListener('DOMContentLoaded', () => {
         vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
         
         float d = length(p) * distortion;
-        
-        float rx = p.x * (1.0 + d);
-        float gx = p.x;
-        float bx = p.x * (1.0 - d);
 
-        float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
-        float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
-        float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
+        // =========================================================================
+        // 1. ANALOG TV STATIC / CRT GRAIN (shader.se 80s business tech aesthetic)
+        // =========================================================================
+        vec2 staticCoord = floor(gl_FragCoord.xy * 0.65) + vec2(sin(time * 31.4) * 100.0, cos(time * 47.1) * 100.0);
+        float tvNoise = fract(sin(dot(staticCoord, vec2(12.9898, 78.233))) * 43758.5453);
 
-        vec3 kornblumeAzure = vec3(0.20, 0.55, 1.0);
-        vec3 cyanHighlight  = vec3(0.38, 0.88, 1.0);
-        vec3 coreWhite      = vec3(1.0, 1.0, 1.0);
+        // CRT scanlines: horizontal raster lines across the canvas
+        float scanline = sin(gl_FragCoord.y * 1.8) * 0.055;
 
-        vec3 waveCol = r * vec3(0.32, 0.22, 0.85)
-                     + g * cyanHighlight * 0.90
-                     + b * kornblumeAzure * 1.55;
+        // Subtle analog CRT vertical roll / sync flicker
+        float syncRoll = sin(gl_FragCoord.y * 0.012 - time * 2.8) * 0.03;
 
-        float intensity = (r + g + b) * 0.333;
-        if (intensity > 0.85) {
-          waveCol = mix(waveCol, coreWhite, clamp((intensity - 0.85) * 0.75, 0.0, 1.0));
-        }
+        // CRT vignette: soft falloff towards edges
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        float vignette = uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
+        vignette = clamp(pow(16.0 * vignette, 0.25), 0.0, 1.0);
 
-        float alpha = clamp(max(max(r, g), b) * 1.5, 0.0, 0.95);
+        // Deep retro monitor base color (dark navy/charcoal)
+        vec3 crtDarkBase = vec3(0.022, 0.028, 0.042);
 
-        gl_FragColor = vec4(waveCol, alpha);
+        // Composite TV static noise (snow/grain)
+        float staticDelta = (tvNoise - 0.5) * 0.28 + scanline + syncRoll;
+        vec3 tvStaticColor = clamp(crtDarkBase + vec3(staticDelta * 1.1, staticDelta * 1.05, staticDelta * 1.4), 0.0, 1.0);
+        tvStaticColor *= (0.65 + 0.35 * vignette);
+
+        // =========================================================================
+        // 2. DUAL GLOWING SINE WAVES (Blue NYCU Azure + Red Foxconn Crimson)
+        // Soft diffused ambient light ribbons blurred underneath static grain
+        // =========================================================================
+        // WAVE 1: BLUE SINE WAVE (NYCU Azure)
+        float y1 = sin((p.x + time * 0.85) * xScale) * (yScale * 0.52) + 0.12;
+        float d1 = abs(p.y - y1);
+        float blueGlow = 0.045 / (d1 * 1.5 + 0.05) + 0.035 / (d1 * 3.5 + 0.16);
+        vec3 colBlue = blueGlow * vec3(0.12, 0.65, 1.00);
+
+        // WAVE 2: RED SINE WAVE (Foxconn Crimson)
+        float y2 = sin((p.x - time * 0.85) * (xScale * 0.92) + 2.2) * (yScale * 0.52) - 0.20;
+        float d2 = abs(p.y - y2);
+        float redGlow = 0.055 / (d2 * 1.5 + 0.05) + 0.040 / (d2 * 3.5 + 0.16);
+        vec3 colRed = redGlow * vec3(1.00, 0.14, 0.30);
+
+        // Combine both waves
+        vec3 waveCol = colBlue + colRed;
+
+        // Add waves on top of TV static background
+        vec3 finalColor = tvStaticColor + waveCol;
+
+        // Full opacity so TV static background is continuously active and visible
+        float maxGlow = max(blueGlow, redGlow);
+        float alpha = clamp(0.94 + maxGlow * 0.5, 0.0, 1.0);
+
+        gl_FragColor = vec4(finalColor, alpha);
       }
     `;
 
@@ -362,8 +628,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    window.resizeNycuCanvas = resize;
+    window.addEventListener('resize', resize, { passive: true });
+
+    const card2 = document.getElementById('cardCol2');
+    if (window.ResizeObserver && card2) {
+      new ResizeObserver(() => resize()).observe(card2);
+    }
+
+    // Initial sizing without layout thrashing inside renderLoop
+    resize();
+
     function renderLoop() {
-      resize();
+      // Zero-lag optimization: Only render WebGL when Card 02 is active or hovered
+      const isCard2Visible = card2 && (card2.classList.contains('is-locked-card') || card2.classList.contains('is-hover-expanded'));
+      if (!isCard2Visible) {
+        requestAnimationFrame(renderLoop);
+        return;
+      }
+
       gl.clearColor(0.0, 0.0, 0.0, 0.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.useProgram(prog);
@@ -386,14 +669,516 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderLoop();
+  }
 
-    const card2 = document.getElementById('cardCol2');
-    if (window.ResizeObserver && card2) {
-      new ResizeObserver(() => resize()).observe(card2);
+
+  // ==========================================================================
+  // Project Result Sliders for Card 02 (NYCU x Foxconn)
+  // Individual result scrollers for each of the 3 projects
+  // ==========================================================================
+  function initProjectSliders() {
+    const sliderCards = document.querySelectorAll('.project-slider-card');
+    sliderCards.forEach((card) => {
+      const slides = card.querySelectorAll('.project-slide');
+      const dots = card.querySelectorAll('.slider-dot');
+      const prevBtn = card.querySelector('.slider-btn--prev');
+      const nextBtn = card.querySelector('.slider-btn--next');
+      if (!slides.length) return;
+
+      let currentIndex = 0;
+
+      function goToSlide(index) {
+        currentIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => {
+          if (i === currentIndex) {
+            slide.classList.add('is-active');
+          } else {
+            slide.classList.remove('is-active');
+          }
+        });
+        dots.forEach((dot, i) => {
+          if (i === currentIndex) {
+            dot.classList.add('is-active');
+          } else {
+            dot.classList.remove('is-active');
+          }
+        });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          goToSlide(currentIndex - 1);
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          goToSlide(currentIndex + 1);
+        });
+      }
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          goToSlide(i);
+        });
+      });
+
+      // Swipe support for touch devices
+      let touchStartX = 0;
+      card.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+      }, { passive: true });
+
+      card.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diffX = touchEndX - touchStartX;
+        if (Math.abs(diffX) > 40) {
+          if (diffX < 0) {
+            goToSlide(currentIndex + 1);
+          } else {
+            goToSlide(currentIndex - 1);
+          }
+        }
+      }, { passive: true });
+    });
+  }
+
+
+  // ==========================================================================
+  // SCROLLYTELLING EXHIBITION (Picture 1 & Picture 2 Reference)
+  // Card 02: NYCU × Foxconn Joint Semiconductor Research Pipeline
+  // ==========================================================================
+  function initScrollytellingExhibition() {
+    const dossier = document.getElementById('dossier2');
+    const mainCanvas = document.getElementById('scrollyMainCanvas');
+    const railNavProgress = document.getElementById('railNavProgress');
+    const railChapterBtns = Array.from(document.querySelectorAll('.rail-chapter-btn'));
+    const categoryPillBtns = Array.from(document.querySelectorAll('.category-pill'));
+    const chapterSections = Array.from(document.querySelectorAll('.scrolly-chapter-section'));
+    const cardCol2 = document.getElementById('cardCol2');
+
+    if (!dossier || !mainCanvas) return;
+
+    // 1. Scrollytelling Scroll Progress & Chapter Auto-Highlighting (Picture 1)
+    function updateScrollProgress() {
+      const isMobile = window.innerWidth <= 1024;
+      const scroller = isMobile ? window : mainCanvas;
+
+      let scrollTop = 0;
+      let scrollHeight = 0;
+      let clientHeight = 0;
+
+      if (isMobile) {
+        scrollTop = window.scrollY || window.pageYOffset;
+        scrollHeight = document.documentElement.scrollHeight;
+        clientHeight = window.innerHeight;
+      } else {
+        scrollTop = mainCanvas.scrollTop;
+        scrollHeight = mainCanvas.scrollHeight;
+        clientHeight = mainCanvas.clientHeight;
+      }
+
+      const maxScroll = scrollHeight - clientHeight;
+      const progress = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+
+      if (railNavProgress) {
+        railNavProgress.style.height = `${Math.min(100, Math.max(0, progress))}%`;
+      }
+
+      // Determine active chapter based on viewport position
+      let activeIdx = 0;
+      chapterSections.forEach((section, idx) => {
+        const rect = section.getBoundingClientRect();
+        const triggerPoint = isMobile ? window.innerHeight * 0.45 : mainCanvas.getBoundingClientRect().top + mainCanvas.clientHeight * 0.35;
+        if (rect.top <= triggerPoint) {
+          activeIdx = idx;
+        }
+      });
+
+      railChapterBtns.forEach((btn, idx) => {
+        const isActive = idx === activeIdx;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      categoryPillBtns.forEach((pill, idx) => {
+        const isActive = idx === activeIdx;
+        pill.classList.toggle('is-active', isActive);
+        pill.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
     }
+
+    // Scroll listeners
+    mainCanvas.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (window.innerWidth <= 1024) updateScrollProgress();
+    }, { passive: true });
+
+    // Chapter button click smooth scroll
+    railChapterBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetId = btn.dataset.target;
+        const targetEl = document.getElementById(targetId);
+        if (!targetEl) return;
+
+        const isMobile = window.innerWidth <= 1024;
+        if (isMobile) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          const topPos = targetEl.offsetTop - mainCanvas.offsetTop;
+          mainCanvas.scrollTo({ top: topPos, behavior: 'smooth' });
+        }
+
+        railChapterBtns.forEach(b => b.classList.toggle('is-active', b === btn));
+      });
+    });
+
+    // Category pills click smooth scroll (Image 1)
+    categoryPillBtns.forEach((pill) => {
+      pill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetId = pill.dataset.target;
+        const targetEl = document.getElementById(targetId);
+        if (!targetEl) return;
+
+        const isMobile = window.innerWidth <= 1024;
+        if (isMobile) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          const topPos = targetEl.offsetTop - mainCanvas.offsetTop;
+          mainCanvas.scrollTo({ top: topPos, behavior: 'smooth' });
+        }
+
+        categoryPillBtns.forEach(p => p.classList.toggle('is-active', p === pill));
+      });
+    });
+
+    // 2. User's Interactive Details & Summary Component Logic
+    const disclosureContainers = Array.from(document.querySelectorAll('.feature-disclosure-container'));
+
+    disclosureContainers.forEach((container) => {
+      const section = container.querySelector('.disclosure-section');
+      if (!section) return;
+
+      const detailsElements = Array.from(section.querySelectorAll('details[name^="feature"]'));
+      const nextButton = section.querySelector('button[data-action="next"]');
+      const previousButton = section.querySelector('button[data-action="previous"]');
+      const exitButton = section.querySelector('button[data-action="exit"]');
+
+      const getOpenDetails = () => {
+        return detailsElements.findIndex(details => details.open);
+      };
+
+      // Toggle state synchronization
+      const syncState = async () => {
+        if (!section.matches(':has([open])')) {
+          section.dataset.checkingDetails = 'false';
+        } else {
+          try {
+            await Promise.allSettled(section.getAnimations({ subtree: true }).map(a => a.finished));
+          } catch (err) {
+            // fallback if getAnimations isn't available
+          }
+          section.dataset.checkingDetails = 'true';
+        }
+      };
+
+      section.addEventListener('toggle', syncState, true);
+
+      // Next Details Button
+      nextButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentIndex = getOpenDetails();
+        if (currentIndex !== -1) {
+          detailsElements[currentIndex].open = false;
+          const nextIndex = (currentIndex + 1) % detailsElements.length;
+          detailsElements[nextIndex].open = true;
+        } else {
+          detailsElements[0].open = true;
+        }
+      });
+
+      // Previous Details Button
+      previousButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentIndex = getOpenDetails();
+        if (currentIndex !== -1) {
+          detailsElements[currentIndex].open = false;
+          const prevIndex = (currentIndex - 1 + detailsElements.length) % detailsElements.length;
+          detailsElements[prevIndex].open = true;
+        } else {
+          detailsElements[detailsElements.length - 1].open = true;
+        }
+      });
+
+      // Exit Details Button
+      exitButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentIndex = getOpenDetails();
+        if (currentIndex !== -1) {
+          detailsElements[currentIndex].open = false;
+        }
+      });
+    });
+
+    // 3. Hot-Swap 48V vs 400V Architecture Switcher & Comparison Slider
+    function initHotswapVoltageOptions() {
+      const chHotswap = document.getElementById('ch-hotswap');
+      if (!chHotswap) return;
+
+      const voltBtns = Array.from(chHotswap.querySelectorAll('.voltage-pill-btn'));
+      const compareCard = document.getElementById('pcbCompareCard');
+      const compareSlider = document.getElementById('pcbCompareSlider');
+      
+      // Squircles elements
+      const metric1 = document.getElementById('hsSquircleVal1');
+      const desc1 = document.getElementById('hsSquircleDesc1');
+      const desc2 = document.getElementById('hsSquircleDesc2');
+      const metric3 = document.getElementById('hsSquircleVal3');
+      const desc3 = document.getElementById('hsSquircleDesc3');
+
+      // Disclosure content containers
+      const contentSchematic = document.getElementById('hsContentSchematic');
+      const contentPrototype = document.getElementById('hsContentPrototype');
+      const contentCalculation = document.getElementById('hsContentCalculation');
+
+      // Disclosure images
+      const imgPrototype = document.getElementById('hsImgPrototype');
+      const imgCalculation = document.getElementById('hsImgCalculation');
+
+      let currentVoltage = '48v';
+
+      const dataStore = {
+        '48v': {
+          metric1: 'x3~',
+          desc1: 'Tune to startup 3 times faster',
+          desc2: 'Active Safe Operating Area (SOA)',
+          metric3: '92.4%',
+          desc3: 'Thermal',
+          schematic: '<p><strong>48V Si Hot-Swap Architecture</strong> Designed and bench-validated 48V architectures (KiCad), achieving ~95% current-limit spec agreement via rigorous pin-by-pin bring-up.</p>',
+          prototype: '<p><strong>48V Bench Safe-Boot Validation</strong> Achieved ~3x faster safe-boot and ~93% lower thermal stress versus stock EVMs on bench load banks with zero inrush damage.</p>',
+          calculation: '<p><strong>Safe-Boot Timing Optimization</strong> Derived slew-rate formulas for dual-slope start timing, reducing inrush thermal stress while maintaining FET operation strictly within Safe Operating Area (SOA).</p>',
+          imgProto: 'Hot Swap/48V Proto.jpg',
+          imgCalc: 'Hot Swap/48V Test.png'
+        },
+        '400v': {
+          metric1: '400V',
+          desc1: 'Foxconn AI Data Center Racks',
+          desc2: 'Signal-Looping ~64x Fault Resolved',
+          metric3: '6 kW',
+          desc3: 'SiC Hot-Swap Deployment',
+          schematic: '<p><strong>400V SiC Hot-Swap Architecture</strong> Multi-layer schematic for 400V/800V servers utilizing SiC MOSFETs, featuring isolated gate drives and transient snubbers to survive severe inductive kickback.</p>',
+          prototype: '<p><strong>400V SiC Prototype Resolution</strong> Diagnosed and resolved a critical 400V signal-looping fault via an optimized RC suppression network, enabling zero-damage safe-boot for Foxconn\'s HHTD26 showcase.</p>',
+          calculation: '<p><strong>Inrush Energy Derivations</strong> Calculated inrush energy and optimized gate damping criteria to quench high-frequency oscillations, ensuring power dissipation remains strictly within the SiC pulsed Safe Operating Area.</p>',
+          imgProto: 'Hot Swap/400V Proto.jpg',
+          imgCalc: 'Hot Swap/400V_Test_Final.png'
+        }
+      };
+
+      function setVoltage(voltage, moveSlider = true) {
+        const v = dataStore[voltage] ? voltage : '48v';
+        if (currentVoltage === v && !moveSlider) return;
+        currentVoltage = v;
+        const d = dataStore[v];
+
+        // Update active toggle buttons
+        voltBtns.forEach(btn => {
+          const isActive = btn.dataset.voltage === v;
+          btn.classList.toggle('is-active', isActive);
+          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        // Move comparison slider if requested by button click
+        if (moveSlider && compareSlider && compareCard) {
+          const targetVal = v === '48v' ? 88 : 12;
+          compareSlider.value = targetVal;
+          compareCard.style.setProperty('--compare', targetVal);
+        }
+
+        // Update Squircles
+        if (metric1) metric1.textContent = d.metric1;
+        if (desc1) desc1.textContent = d.desc1;
+        if (desc2) desc2.textContent = d.desc2;
+        if (metric3) metric3.textContent = d.metric3;
+        if (desc3) desc3.textContent = d.desc3;
+
+        // Update Disclosures content
+        if (contentSchematic) contentSchematic.innerHTML = d.schematic;
+        if (contentPrototype) contentPrototype.innerHTML = d.prototype;
+        if (contentCalculation) contentCalculation.innerHTML = d.calculation;
+
+        // Update Synchronized Images
+        if (imgPrototype) imgPrototype.src = d.imgProto;
+        if (imgCalculation) imgCalculation.src = d.imgCalc;
+      }
+
+      // Comparison slider interactive drag
+      if (compareSlider && compareCard) {
+        const syncCompare = () => {
+          const val = parseFloat(compareSlider.value);
+          compareCard.style.setProperty('--compare', val);
+          // Seamlessly update architecture info as slider crosses 50%
+          if (val >= 50 && currentVoltage !== '48v') {
+            setVoltage('48v', false);
+          } else if (val < 50 && currentVoltage !== '400v') {
+            setVoltage('400v', false);
+          }
+        };
+
+        compareSlider.addEventListener('input', syncCompare);
+        compareSlider.addEventListener('change', syncCompare);
+      }
+
+      // Toggle button clicks
+      voltBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setVoltage(btn.dataset.voltage, true);
+        });
+      });
+
+      // Default state: 50% slider, 48V active
+      if (compareSlider && compareCard) {
+        compareSlider.value = 50;
+        compareCard.style.setProperty('--compare', 50);
+      }
+      setVoltage('48v', false);
+    }
+
+    // Interactive Zoom and Pan for PCB Comparison Card (Picture 1)
+    function initPcbZoom() {
+      const card = document.getElementById('pcbCompareCard');
+      if (!card) return;
+
+      let zoom = 1.0;
+      let panX = 0;
+      let panY = 0;
+      let isPanning = false;
+      let startX = 0;
+      let startY = 0;
+
+      const zoomInBtn = document.getElementById('pcbZoomInBtn');
+      const zoomOutBtn = document.getElementById('pcbZoomOutBtn');
+      const zoomResetBtn = document.getElementById('pcbZoomResetBtn');
+      const zoomLevelText = document.getElementById('pcbZoomLevelText');
+
+      function applyTransform(smooth = true) {
+        if (smooth) {
+          card.classList.remove('no-transition');
+        } else {
+          card.classList.add('no-transition');
+        }
+        card.style.setProperty('--pcb-zoom', zoom.toFixed(2));
+        card.style.setProperty('--pcb-pan-x', `${panX.toFixed(1)}px`);
+        card.style.setProperty('--pcb-pan-y', `${panY.toFixed(1)}px`);
+
+        if (zoomLevelText) {
+          if (Math.abs(zoom - 1.0) < 0.05 && panX === 0 && panY === 0) {
+            zoomLevelText.textContent = 'FIT';
+          } else {
+            zoomLevelText.textContent = `${Math.round(zoom * 100)}%`;
+          }
+        }
+      }
+
+      function setZoom(newZoom) {
+        zoom = Math.min(3.0, Math.max(0.75, newZoom));
+        if (zoom <= 1.0) {
+          panX = 0;
+          panY = 0;
+        }
+        applyTransform(true);
+      }
+
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setZoom(zoom + 0.25);
+        });
+      }
+
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setZoom(zoom - 0.25);
+        });
+      }
+
+      if (zoomResetBtn) {
+        zoomResetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          zoom = 1.0;
+          panX = 0;
+          panY = 0;
+          applyTransform(true);
+        });
+      }
+
+      // Wheel zoom inside card
+      card.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = -e.deltaY;
+        const factor = delta > 0 ? 1.15 : 0.85;
+        setZoom(zoom * factor);
+      }, { passive: false });
+
+      // Drag to pan when zoomed
+      card.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.pcb-zoom-dock')) return;
+
+        const rect = card.getBoundingClientRect();
+        const comparePercent = parseFloat(card.style.getPropertyValue('--compare') || '50');
+        const dividerX = rect.left + (comparePercent / 100) * rect.width;
+
+        // If clicked near the slider divider line (within 28px) and not zoomed in, let slider handle it
+        if (Math.abs(e.clientX - dividerX) < 28 && zoom <= 1.05) {
+          return;
+        }
+
+        // Otherwise pan the PCB
+        isPanning = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+        card.classList.add('is-panning', 'no-transition');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isPanning) return;
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        applyTransform(false);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isPanning) {
+          isPanning = false;
+          card.classList.remove('is-panning', 'no-transition');
+        }
+      });
+    }
+
+    initHotswapVoltageOptions();
+    initPcbZoom();
+
+    // Refresh on expand and resize
+    if (cardCol2) {
+      cardCol2.addEventListener('click', () => {
+        setTimeout(updateScrollProgress, 120);
+        setTimeout(updateScrollProgress, 400);
+      });
+    }
+
+    window.addEventListener('resize', updateScrollProgress);
+    setTimeout(updateScrollProgress, 100);
   }
 
   initNycuWaveCanvas();
+  initProjectSliders();
+  initScrollytellingExhibition();
 
   // ==========================================================================
   // ROADMAP SECTION INTERACTIVITY (Rotary Wheel + Details/Summary Viewer)
@@ -688,5 +1473,353 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ==========================================================================
+  // HERO ROTATING TEXT COMPONENT
+  // Cycles between "Quan" and "Harry" inside the blue highlight rectangle box
+  // Replicating shadcn/ui @/components/ui/rotating-text reel transition
+  // ==========================================================================
+  function initRotatingText() {
+    const box = document.getElementById('heroRotatingBox');
+    const viewport = document.getElementById('rotatingTextViewport');
+    const heroHeading = document.getElementById('heroNameHeading');
+    if (!box || !viewport) return;
+
+    const words = ['Quan', 'Harry'];
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let intervalId = null;
+    const DURATION = 2800; // 2.8s per word
+
+    function createWordElement(word, stateClass = '') {
+      const span = document.createElement('span');
+      span.className = `rotating-word ${stateClass}`.trim();
+      span.innerHTML = word
+        .split('')
+        .map((char, i) => `<span class="rot-char" style="--i: ${i}">${char}</span>`)
+        .join('');
+      return span;
+    }
+
+    function lockStableBoxProportion() {
+      // Temporarily clear inline width to measure true unconstrained dimensions
+      box.style.width = 'auto';
+
+      let maxWordWidth = 0;
+      words.forEach(word => {
+        const testEl = createWordElement(word, 'is-active');
+        testEl.style.visibility = 'hidden';
+        testEl.style.position = 'absolute';
+        testEl.style.width = 'max-content';
+        testEl.style.pointerEvents = 'none';
+        viewport.appendChild(testEl);
+        const rect = testEl.getBoundingClientRect();
+        if (rect.width > maxWordWidth) {
+          maxWordWidth = rect.width;
+        }
+        testEl.remove();
+      });
+
+      if (maxWordWidth > 0) {
+        const style = window.getComputedStyle(box);
+        const padLeft = parseFloat(style.paddingLeft) || 0;
+        const padRight = parseFloat(style.paddingRight) || 0;
+        // Lock box to max word width + padding + safety margin for subpixel rendering
+        box.style.width = `${Math.ceil(maxWordWidth + padLeft + padRight + 6)}px`;
+      }
+    }
+
+    // Set initial word
+    viewport.innerHTML = '';
+    const initialWord = createWordElement(words[0], 'is-active');
+    viewport.appendChild(initialWord);
+
+    // Lock fixed proportional width so it never expands and closes
+    requestAnimationFrame(() => {
+      lockStableBoxProportion();
+    });
+
+    function rotateToNext() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      const nextIndex = (currentIndex + 1) % words.length;
+      const currentWordEl = viewport.querySelector('.rotating-word.is-active');
+      const nextWordEl = createWordElement(words[nextIndex], 'is-animating is-entering');
+
+      viewport.appendChild(nextWordEl);
+
+      // Update accessibility label
+      if (heroHeading) {
+        heroHeading.setAttribute('aria-label', `${words[nextIndex]} Nguyen`);
+      }
+
+      // Trigger exit on current word
+      if (currentWordEl) {
+        currentWordEl.classList.remove('is-active');
+        currentWordEl.classList.add('is-exiting');
+      }
+
+      // Double rAF ensures CSS transition triggers from translateY(130%) to translateY(0)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          nextWordEl.classList.remove('is-entering');
+          nextWordEl.classList.add('is-entered');
+        });
+      });
+
+      // Once transition finishes, clean up DOM and finalize state
+      setTimeout(() => {
+        if (currentWordEl && currentWordEl.parentNode) {
+          currentWordEl.remove();
+        }
+        nextWordEl.className = 'rotating-word is-active';
+        currentIndex = nextIndex;
+        isTransitioning = false;
+      }, 520);
+    }
+
+    function startTimer() {
+      stopTimer();
+      intervalId = setInterval(rotateToNext, DURATION);
+    }
+
+    function stopTimer() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+
+    // Start auto cycle
+    startTimer();
+
+    // Pause on hover
+    box.addEventListener('mouseenter', stopTimer);
+    box.addEventListener('mouseleave', startTimer);
+
+    // Click to immediately cycle
+    box.addEventListener('click', () => {
+      rotateToNext();
+      startTimer();
+    });
+
+    // Keyboard support
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        rotateToNext();
+        startTimer();
+      }
+    });
+
+    // Recalculate on window resize / font load
+    window.addEventListener('resize', () => {
+      lockStableBoxProportion();
+    });
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        lockStableBoxProportion();
+      });
+    }
+  }
+
+  // ==========================================================================
+  // Interactive Project Showcase (Details & Summary Smooth Height Disclosure)
+  // ==========================================================================
+  function initProjectFeatureShowcase() {
+    const section = document.getElementById('projectFeatureSection');
+    if (!section) return;
+
+    const detailsElements = Array.from(section.querySelectorAll('details[name="feature"]'));
+    const nextBtn = section.querySelector('button[data-action="next"]');
+    const prevBtn = section.querySelector('button[data-action="previous"]');
+    const exitBtn = section.querySelector('button[data-action="exit"]');
+
+    const getOpenDetails = () => {
+      return detailsElements.findIndex((details) => details.open);
+    };
+
+    nextBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentIndex = getOpenDetails();
+      if (currentIndex !== -1) {
+        detailsElements[currentIndex].open = false;
+        const nextIndex = (currentIndex + 1) % detailsElements.length;
+        detailsElements[nextIndex].open = true;
+      } else if (detailsElements.length > 0) {
+        detailsElements[0].open = true;
+      }
+    });
+
+    prevBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentIndex = getOpenDetails();
+      if (currentIndex !== -1) {
+        detailsElements[currentIndex].open = false;
+        const prevIndex = (currentIndex - 1 + detailsElements.length) % detailsElements.length;
+        detailsElements[prevIndex].open = true;
+      } else if (detailsElements.length > 0) {
+        detailsElements[detailsElements.length - 1].open = true;
+      }
+    });
+
+    exitBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentIndex = getOpenDetails();
+      if (currentIndex !== -1) {
+        detailsElements[currentIndex].open = false;
+      }
+    });
+
+    const syncState = async () => {
+      if (!section.matches(':has([open])')) {
+        section.dataset.checkingDetails = 'false';
+      } else {
+        if (typeof section.getAnimations === 'function') {
+          const anims = section.getAnimations({ subtree: true });
+          if (anims && anims.length > 0) {
+            await Promise.allSettled(anims.map((a) => a.finished));
+          }
+        }
+        section.dataset.checkingDetails = 'true';
+      }
+    };
+
+    section.addEventListener('toggle', syncState, true);
+  }
+
+  // ==========================================================================
+  // Custom Curved Scrollbars (Following Container Border-Radius)
+  // ==========================================================================
+  function initCurvedScrollbars() {
+    const OFFSET = 6;
+    const EXTRA_INSET = 2;
+    const MIN_START_RATIO = 0.8;
+    const MIN_THUMB = 24;
+    const SEGMENTS = 50;
+
+    function initCurvedScrollbar(container) {
+      if (!container || container._hasCurvedScrollbar) return;
+      container._hasCurvedScrollbar = true;
+
+      const content = container.querySelector('.scroll-content');
+      if (!content) return;
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.classList.add('scrollbar-svg');
+      svg.setAttribute('aria-hidden', 'true');
+
+      const trackPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      trackPath.classList.add('scrollbar-track');
+
+      const thumbPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      thumbPath.classList.add('scrollbar-thumb');
+
+      svg.appendChild(trackPath);
+      svg.appendChild(thumbPath);
+      container.appendChild(svg);
+
+      let pathLength = 0;
+      let thumbLength = 50;
+      let dragging = false;
+      let pointerId = null;
+
+      function updatePath() {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (w <= 0 || h <= 0) return;
+
+        const r = parseFloat(getComputedStyle(container).borderRadius) || 16;
+        const effectiveRadius = Math.max(r - OFFSET, 2);
+        const trackX = w - OFFSET;
+        const topY = OFFSET;
+        const bottomY = h - OFFSET;
+        const cornerX = trackX - effectiveRadius;
+
+        const minStartX = w * MIN_START_RATIO;
+        let startX = trackX - effectiveRadius * EXTRA_INSET;
+        if (startX < minStartX) startX = minStartX;
+        if (startX > cornerX) startX = cornerX;
+
+        const d = `
+          M ${startX} ${topY}
+          L ${cornerX} ${topY}                     
+          A ${effectiveRadius} ${effectiveRadius} 0 0 1 ${trackX} ${topY + effectiveRadius} 
+          L ${trackX} ${bottomY - effectiveRadius} 
+          A ${effectiveRadius} ${effectiveRadius} 0 0 1 ${cornerX} ${bottomY} 
+          L ${startX} ${bottomY}
+        `;
+        trackPath.setAttribute('d', d);
+
+        pathLength = trackPath.getTotalLength();
+        const ratio = content.clientHeight / content.scrollHeight;
+        thumbLength = Math.max(MIN_THUMB, Math.min(pathLength * 0.9, pathLength * ratio));
+
+        if (content.scrollHeight <= content.clientHeight + 2) {
+          svg.style.opacity = '0';
+        } else {
+          svg.style.opacity = '1';
+        }
+
+        updateThumb();
+      }
+
+      function updateThumb() {
+        const scrollableHeight = content.scrollHeight - content.clientHeight || 1;
+        const scrollRatio = Math.max(0, Math.min(1, content.scrollTop / scrollableHeight));
+        const startOffset = (pathLength - thumbLength) * scrollRatio;
+        const endOffset = startOffset + thumbLength;
+
+        const points = [];
+        for (let i = 0; i <= SEGMENTS; i++) {
+          const t = startOffset + ((endOffset - startOffset) / SEGMENTS) * i;
+          const p = trackPath.getPointAtLength(t);
+          points.push(`${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+        }
+
+        const segmentD = `M ${points[0]} ${points.slice(1).map((pt) => `L ${pt}`).join(' ')}`;
+        thumbPath.setAttribute('d', segmentD);
+      }
+
+      thumbPath.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragging = true;
+        pointerId = e.pointerId;
+        try { thumbPath.setPointerCapture(pointerId); } catch {}
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!dragging || e.pointerId !== pointerId) return;
+        const rect = container.getBoundingClientRect();
+        let ratio = (e.clientY - rect.top) / rect.height;
+        ratio = Math.max(0, Math.min(1, ratio));
+        content.scrollTop = ratio * (content.scrollHeight - content.clientHeight);
+        updateThumb();
+      });
+
+      window.addEventListener('pointerup', (e) => {
+        if (!dragging || e.pointerId !== pointerId) return;
+        dragging = false;
+        try { thumbPath.releasePointerCapture(pointerId); } catch {}
+        pointerId = null;
+      });
+
+      content.addEventListener('scroll', updateThumb);
+      window.addEventListener('resize', updatePath);
+
+      container._updateCurvedScrollbar = updatePath;
+      updatePath();
+    }
+
+    document.querySelectorAll('[data-scrollbar]').forEach((container) => {
+      initCurvedScrollbar(container);
+    });
+  }
+
+  initCurvedScrollbars();
+  initProjectFeatureShowcase();
+  initRotatingText();
   animateAmbient();
 });

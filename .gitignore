@@ -1,0 +1,12 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+
+# Local image backups
+Hot Swap/.orig_backup/
+Hot Swap/.true_original_48v.png
+
