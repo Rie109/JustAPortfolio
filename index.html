@@ -9,10 +9,12 @@
     content="Portfolio of Quan Nguyen — Electrical/Semiconductor Engineer specializing in GaN & SiC Power Semiconductors.">
 
   <!-- Favicon: Kornblume (Centaurea cyanus) Botanical Emblem -->
-  <link rel="icon" type="image/svg+xml" href="assets/favicon-kornblume.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=2">
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon-kornblume.svg?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png?v=2">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png?v=2">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=2">
 
   <!-- Preconnect to Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,10 +26,10 @@
   <!-- Preload hero background image -->
   <link rel="preload" as="image" href="assets/Kornblume.webp" type="image/webp" fetchpriority="high">
 
-  <link rel="stylesheet" href="styles.css?v=2.2.0">
+  <link rel="stylesheet" href="styles.css?v=2.3.0">
 </head>
 
-<body>
+<body class="intro-bell-mode">
   <!-- Ambient Cursor Glow Effect -->
   <div class="cursor-ambient" id="cursorAmbient" aria-hidden="true"></div>
 
@@ -37,7 +39,6 @@
       <div class="nav-links" id="navLinks">
         <a href="#home" class="nav-link active" data-section="home" aria-current="page">Home</a>
         <a href="#research" class="nav-link" data-section="research">Research/Work</a>
-        <a href="#roadmap" class="nav-link" data-section="roadmap">Roadmap</a>
         <a href="#publications" class="nav-link" data-section="publications">Publications</a>
         <a href="#info" class="nav-link" data-section="info">Info</a>
       </div>
@@ -51,19 +52,22 @@
           </symbol>
         </svg>
         <span class="rail-point rail-point-start">
-          <svg class="kornblume-svg" width="13" height="13" viewBox="0 0 1214 1204" aria-hidden="true" style="width:13px;height:13px;max-width:13px;max-height:13px;display:block;">
+          <svg class="kornblume-svg" width="13" height="13" viewBox="0 0 1214 1204" aria-hidden="true"
+            style="width:13px;height:13px;max-width:13px;max-height:13px;display:block;">
             <use href="#kornblume-bloom-sym" />
           </svg>
         </span>
         <div class="rail-line">
           <span class="rail-active-bead" id="railBead">
-            <svg class="kornblume-svg" width="18" height="18" viewBox="0 0 1214 1204" aria-hidden="true" style="width:18px;height:18px;max-width:18px;max-height:18px;display:block;">
+            <svg class="kornblume-svg" width="18" height="18" viewBox="0 0 1214 1204" aria-hidden="true"
+              style="width:18px;height:18px;max-width:18px;max-height:18px;display:block;">
               <use href="#kornblume-bloom-sym" />
             </svg>
           </span>
         </div>
         <span class="rail-point rail-point-end">
-          <svg class="kornblume-svg" width="13" height="13" viewBox="0 0 1214 1204" aria-hidden="true" style="width:13px;height:13px;max-width:13px;max-height:13px;display:block;">
+          <svg class="kornblume-svg" width="13" height="13" viewBox="0 0 1214 1204" aria-hidden="true"
+            style="width:13px;height:13px;max-width:13px;max-height:13px;display:block;">
             <use href="#kornblume-bloom-sym" />
           </svg>
         </span>
@@ -463,7 +467,7 @@
                             stroke-width="2.2">
                             <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
                           </svg>
-                          <p class="squircle-desc" id="hsSquircleDesc3">Thermal</p>
+                          <p class="squircle-desc" id="hsSquircleDesc3">Less Thermal Stress</p>
                         </div>
                       </div>
 
@@ -1184,217 +1188,13 @@
     </section>
 
     <!-- ==========================================================================
-         ROADMAP SECTION (Vertical Rotary Wheel Timeline + Details & Summary Viewer)
-         Milestones from 2024 to 2030+ with Kornblume Botanical Visuals
-         ========================================================================== -->
-    <section id="roadmap" class="content-section roadmap-section" aria-label="Career and Academic Roadmap">
-      <div class="roadmap-header-wrap">
-        <header class="section-header">
-          <p class="section-pretitle">02 / CAREER TRAJECTORY & MILESTONES</p>
-          <h2 class="section-title">Career Roadmap (2024 – 2030+)</h2>
-          <p class="section-subtitle">
-            Interactive chronological roadmap spanning high school foundations, semiconductor research at NYCU &
-            Foxconn,
-            embedded security challenges, DAAD RISE Germany fellowships, and ultra-wide-bandgap frontiers.
-          </p>
-          <div class="section-rule"></div>
-        </header>
-      </div>
-
-      <!-- Main Roadmap Split: Rotary Clock Wheel Flush to Left Tab Wall + Aligned Dossier & Right Topic Picker -->
-      <div class="roadmap-layout">
-        <!-- LEFT: Semicircular Rotary Wheel (Pivoting directly on the left window edge) -->
-        <div class="roadmap-wheel-column" aria-label="Milestone Selection Wheel">
-          <div class="wheel-stage">
-            <!-- SVG Clock Face with Radial Graduation Ticks -->
-            <svg id="clockTicksSvg" class="wheel-clock-svg" viewBox="-270 -270 540 540" aria-hidden="true"></svg>
-
-            <!-- Center Pivot Dot on the Left Tab Edge -->
-            <div class="wheel-center-pivot" aria-hidden="true"></div>
-
-            <div class="cards-container">
-              <ul class="cards" style="--items: 7;">
-                <!-- 0: 2024 -->
-                <li style="--i: 0;">
-                  <input type="radio" id="wheel-year-0" name="wheel-year" value="0" checked aria-label="Year 2024">
-                  <label for="wheel-year-0">
-                    <span class="wheel-label-year">2024</span>
-                  </label>
-                </li>
-                <!-- 1: 2025 -->
-                <li style="--i: 1;">
-                  <input type="radio" id="wheel-year-1" name="wheel-year" value="1" aria-label="Year 2025">
-                  <label for="wheel-year-1">
-                    <span class="wheel-label-year">2025</span>
-                  </label>
-                </li>
-                <!-- 2: 2026 -->
-                <li style="--i: 2;">
-                  <input type="radio" id="wheel-year-2" name="wheel-year" value="2" aria-label="Year 2026">
-                  <label for="wheel-year-2">
-                    <span class="wheel-label-year">2026</span>
-                  </label>
-                </li>
-                <!-- 3: 2027 -->
-                <li style="--i: 3;">
-                  <input type="radio" id="wheel-year-3" name="wheel-year" value="3" aria-label="Year 2027">
-                  <label for="wheel-year-3">
-                    <span class="wheel-label-year">2027</span>
-                  </label>
-                </li>
-                <!-- 4: 2028 -->
-                <li style="--i: 4;">
-                  <input type="radio" id="wheel-year-4" name="wheel-year" value="4" aria-label="Year 2028">
-                  <label for="wheel-year-4">
-                    <span class="wheel-label-year">2028</span>
-                  </label>
-                </li>
-                <!-- 5: 2029 -->
-                <li style="--i: 5;">
-                  <input type="radio" id="wheel-year-5" name="wheel-year" value="5" aria-label="Year 2029">
-                  <label for="wheel-year-5">
-                    <span class="wheel-label-year">2029</span>
-                  </label>
-                </li>
-                <!-- 6: 2030+ -->
-                <li style="--i: 6;">
-                  <input type="radio" id="wheel-year-6" name="wheel-year" value="6" aria-label="Year 2030+">
-                  <label for="wheel-year-6">
-                    <span class="wheel-label-year">2030+</span>
-                  </label>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Fixed 3 O'Clock Alignment Pointer Indicator pointing towards Card -->
-            <div class="wheel-pointer-indicator" aria-hidden="true">
-              <span class="pointer-track-line"></span>
-              <span class="pointer-arrow">►</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT: Display Card (Left: Info Display Dossier, Right: Topic Picking + Kornblume Visual) -->
-        <div class="roadmap-viewer-column">
-          <div class="roadmap-viewer-card" id="roadmapViewerCard">
-            <!-- LEFT PANEL: Clean Info Display (Aligned, Clear Unobstructed View) -->
-            <div class="roadmap-info-panel">
-              <div class="viewer-milestone-header">
-                <div class="milestone-badge-row">
-                  <span class="active-card-year" id="activeMilestoneYear">2024</span>
-                  <span class="active-card-badge" id="activeMilestoneBadge">Foundational STEM</span>
-                </div>
-                <h3 class="active-card-title" id="activeMilestoneTitle">Nguyen Thuong Hien High School</h3>
-                <p class="active-card-subtitle" id="activeMilestoneSubtitle">STEM Foundations & Physics Olympiad</p>
-              </div>
-
-              <!-- Topic Content Display Area -->
-              <div class="roadmap-active-topic-display">
-                <div class="topic-indicator-tag">
-                  <span class="topic-indicator-dot"></span>
-                  <span class="topic-indicator-name" id="activeTopicName">Details & Summary</span>
-                </div>
-                <div class="topic-content-body">
-                  <p class="topic-desc-text" id="roadmapTopicContent">
-                    Advanced Physics & Mathematics curriculum at Nguyen Thuong Hien High School for the Gifted. Built
-                    deep foundational analytical rigor in semiconductor physics, electronic principles, and algorithmic
-                    problem-solving for national academic Olympiads.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- RIGHT PANEL: Topic Picking & Kornblume Botanical Visuals -->
-            <div class="roadmap-picker-panel">
-              <!-- Background Visual Artwork (Switches with active topic) -->
-              <div class="picker-visual-bg" aria-hidden="true">
-                <div class="picker-img-slide active" data-img-topic="0">
-                  <img src="assets/Kornblume.jpg" alt="Botanical artwork — Details & Summary" class="picker-bg-img"
-                    loading="lazy">
-                </div>
-                <div class="picker-img-slide" data-img-topic="1">
-                  <img src="assets/kornblume-macro.jpg" alt="Botanical precision — Project Built" class="picker-bg-img"
-                    loading="lazy">
-                </div>
-                <div class="picker-img-slide" data-img-topic="2">
-                  <img src="assets/kornblume-lattice.jpg" alt="Crystalline lattice — In future" class="picker-bg-img"
-                    loading="lazy">
-                </div>
-                <div class="picker-visual-overlay"></div>
-              </div>
-
-              <!-- Topic Picking Button Stack (Topic Selection on Right Side) -->
-              <div class="topic-picker-container">
-                <span class="topic-picker-label">SELECT TOPIC</span>
-                <div class="topic-pill-group" role="tablist" aria-label="Milestone Topics">
-                  <button type="button" class="topic-pill-tab active" role="tab" aria-selected="true" data-topic="0"
-                    id="topicTab0">
-                    <span class="topic-pill-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 8v8" />
-                        <path d="M8 12h8" />
-                      </svg>
-                    </span>
-                    <span class="topic-pill-title">Details & Summary</span>
-                  </button>
-
-                  <button type="button" class="topic-pill-tab" role="tab" aria-selected="false" data-topic="1"
-                    id="topicTab1">
-                    <span class="topic-pill-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M16 18l6-6-6-6" />
-                        <path d="M8 6l-6 6 6 6" />
-                      </svg>
-                    </span>
-                    <span class="topic-pill-title">Project Built</span>
-                  </button>
-
-                  <button type="button" class="topic-pill-tab" role="tab" aria-selected="false" data-topic="2"
-                    id="topicTab2">
-                    <span class="topic-pill-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <polygon
-                          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    </span>
-                    <span class="topic-pill-title">In future</span>
-                  </button>
-                </div>
-
-                <!-- Topic Stepper Navigation Controls -->
-                <div class="topic-nav-controls">
-                  <button type="button" class="topic-nav-btn prev-topic-btn" id="prevTopicBtn"
-                    aria-label="Previous Topic" title="Previous Topic">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M18 15l-6-6-6 6" />
-                    </svg>
-                  </button>
-                  <button type="button" class="topic-nav-btn next-topic-btn" id="nextTopicBtn" aria-label="Next Topic"
-                    title="Next Topic">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==========================================================================
          PUBLICATIONS SECTION (Peer-Reviewed Papers, Preprints & BibTeX Citations)
          ========================================================================== -->
     <section id="publications" class="content-section publications-section"
       aria-label="Publications and Research Papers">
       <div class="section-container">
         <header class="section-header">
-          <p class="section-pretitle">03 / PEER-REVIEWED & TECHNICAL PAPERS</p>
+          <p class="section-pretitle">02 / PEER-REVIEWED & TECHNICAL PAPERS</p>
           <h2 class="section-title">Publications & Research</h2>
           <p class="section-subtitle">
             Scientific investigations, conference proceedings, and technical whitepapers in Wide-Bandgap (GaN/SiC)
@@ -1407,31 +1207,29 @@
         <div class="pub-filter-bar" role="tablist" aria-label="Publication Categories">
           <button type="button" class="pub-filter-pill active" data-filter="all" role="tab" aria-selected="true">All
             Works (4)</button>
-          <button type="button" class="pub-filter-pill" data-filter="gan" role="tab" aria-selected="false">GaN & SiC
-            Power</button>
-          <button type="button" class="pub-filter-pill" data-filter="tcad" role="tab" aria-selected="false">TCAD &
-            Modeling</button>
-          <button type="button" class="pub-filter-pill" data-filter="security" role="tab" aria-selected="false">Hardware
-            Security</button>
+          <button type="button" class="pub-filter-pill" data-filter="published" role="tab"
+            aria-selected="false">Published (1)</button>
+          <button type="button" class="pub-filter-pill" data-filter="coming-soon" role="tab"
+            aria-selected="false">Coming Soon (3)</button>
         </div>
 
         <div class="publications-list">
-          <!-- Publication 1 -->
-          <article class="pub-card" data-category="gan">
+          <!-- Publication 1: Published Article -->
+          <article class="pub-card" data-category="published">
             <div class="pub-card-top">
-              <span class="pub-badge journal">Journal Article • In Review</span>
-              <span class="pub-year">2026</span>
+              <span class="pub-badge published">Journal Article • Published</span>
+              <span class="pub-year">2024</span>
             </div>
             <h3 class="pub-title">
-              Dynamic R<sub>DS(on)</sub> Trapping Kinetics and Gate-Lag Degradation in High-Voltage AlGaN/GaN HEMTs
-              Under Severe Electric Field Stress
+              Classification of Plant Leaves and Flowers Using Image Processing and Deep Neural Networks
             </h3>
             <p class="pub-authors">
-              <strong>Quan (Harry) Nguyen</strong>, Joint Semiconductor Research Group, Foxconn Semiconductor Research
-              Center & NYCU
+              Bui Hai Phong, Huynh Minh Tri, <strong>Nguyen Chi Anh Quan</strong>, Nguyen Quang Minh, Le Anh Chuong
             </p>
             <p class="pub-venue">
-              <em>IEEE Transactions on Electron Devices (TED)</em> — Manuscript in Peer Review
+              <em><a href="https://ijarcs.info/index.php/Ijarcs/index" target="_blank"
+                  rel="noopener noreferrer">International Journal of Advanced Research in Computer Science</a></em>,
+              Vol. 15, No. 5, pp. 34–37 (2024)
             </p>
 
             <details class="pub-abstract-details">
@@ -1441,192 +1239,172 @@
               </summary>
               <div class="pub-abstract-content">
                 <p>
-                  High-voltage gallium nitride (GaN) high-electron-mobility transistors (HEMTs) suffer from dynamic
-                  on-resistance (R<sub>DS(on)</sub>) degradation induced by electron trapping in buffer layers and
-                  surface states during off-state bias. In this work, high-speed double-pulse switching diagnostics and
-                  pulsed I-V characterization reveal the activation energies and emission time constants of donor- and
-                  acceptor-like traps. A multi-field-plate architecture is proposed and validated through Sentaurus TCAD
-                  simulations, achieving a 34% reduction in peak electric field at the gate edge and limiting dynamic
-                  R<sub>DS(on)</sub> rise to under 1.18× across 600V switching cycles.
+                  Plants have shown an important role for our life and industry. In nature, there exists a large number
+                  of species of plants. The recognition and classification of plants is a challenging task. The
+                  understanding of plants allows us to develop various useful applications in our life. The paper
+                  presents a classification method of plant leaves and flowers using the image processing and deep
+                  neural networks (e.g., Alexnet, VGG, Resnet-50). The proposed method has been applied for leaves and
+                  flowers images that are collected and normalized from multiple sources. We have evaluated the proposed
+                  method on two public datasets: plant leaves and flowers. The large dataset is collected and prepared
+                  from various sources. The classification accuracies of 94% and 95% are obtained for the plant leaves
+                  and flowers, respectively. The obtained results have shown the effectiveness of our proposed method.
                 </p>
               </div>
             </details>
 
             <div class="pub-actions">
-              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2026dynamic">
+              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="phong2024classification">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                   <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                 </svg>
                 <span>Copy BibTeX</span>
               </button>
-              <a href="#" class="pub-btn pub-btn-link"
-                onclick="alert('Preprint PDF download link will be available upon publication release.'); return false;">
+              <a href="https://doi.org/10.26483/ijarcs.v15i5.7137" target="_blank" rel="noopener noreferrer"
+                class="pub-btn pub-btn-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                <span>DOI: 10.26483/ijarcs.v15i5.7137</span>
+              </a>
+              <a href="https://ijarcs.info/index.php/Ijarcs/article/view/7137" target="_blank" rel="noopener noreferrer"
+                class="pub-btn pub-btn-link">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
                   <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                <span>Download Preprint (PDF)</span>
+                <span>View Paper (IJARCS)</span>
               </a>
             </div>
           </article>
 
-          <!-- Publication 2 -->
-          <article class="pub-card" data-category="gan">
+          <!-- Publication 2: Coming Soon -->
+          <article class="pub-card" data-category="coming-soon">
             <div class="pub-card-top">
-              <span class="pub-badge conf">Conference Proceeding</span>
-              <span class="pub-year">2026</span>
+              <span class="pub-badge coming-soon">Coming Soon</span>
+              <span class="pub-year">Forthcoming</span>
             </div>
             <h3 class="pub-title">
-              Switching Reliability and Body-Diode Degradation in 1.2 kV SiC Power MOSFETs Subjected to Repetitive
-              Double-Pulse Stress
+              Coming Soon — Research in Progress
             </h3>
             <p class="pub-authors">
-              <strong>Quan (Harry) Nguyen</strong>, Advanced Power Device Group
+              <strong>Quan (Harry) Nguyen</strong>, et al.
             </p>
             <p class="pub-venue">
-              <em>IEEE Applied Power Electronics Conference and Exposition (APEC 2026)</em>
+              <em>Manuscript in preparation</em> — Forthcoming
             </p>
 
             <details class="pub-abstract-details">
               <summary class="pub-abstract-summary">
-                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-text">Abstract & Summary</span>
                 <span class="abstract-toggle-arrow">▾</span>
               </summary>
               <div class="pub-abstract-content">
                 <p>
-                  Silicon Carbide (SiC) power MOSFETs offer superior critical breakdown field and thermal conductivity
-                  for medium-voltage electric vehicle inverters. However, bipolar degradation in the intrinsic body
-                  diode caused by stacking faults can degrade forward voltage drop and switching loss over time. This
-                  paper presents an automated inductive double-pulse testbench operating at 800V / 40A with real-time
-                  junction temperature tracking, evaluating body-diode commutation ruggedness and safe operating area
-                  (SOA) boundaries.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                  aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                  officia deserunt mollit anim id est laborum.
                 </p>
               </div>
             </details>
 
             <div class="pub-actions">
-              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2026sic">
+              <span class="pub-btn pub-btn-disabled">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <span>Copy BibTeX</span>
-              </button>
-              <a href="#" class="pub-btn pub-btn-link"
-                onclick="alert('Conference proceeding will be indexed on IEEE Xplore.'); return false;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-                <span>IEEE Xplore</span>
-              </a>
+                <span>Coming Soon</span>
+              </span>
             </div>
           </article>
 
-          <!-- Publication 3 -->
-          <article class="pub-card" data-category="tcad">
+          <!-- Publication 3: Coming Soon -->
+          <article class="pub-card" data-category="coming-soon">
             <div class="pub-card-top">
-              <span class="pub-badge conf">Symposium Proceeding</span>
-              <span class="pub-year">2025</span>
+              <span class="pub-badge coming-soon">Coming Soon</span>
+              <span class="pub-year">Forthcoming</span>
             </div>
             <h3 class="pub-title">
-              Numerical Field-Plate Optimization and Edge-Termination for Nanoscale High-Breakdown GaN Power Diodes
+              Coming Soon — Upcoming Conference Submission
             </h3>
             <p class="pub-authors">
-              <strong>Quan (Harry) Nguyen</strong>, University of Cincinnati & NYCU Joint Semiconductor Lab
+              <strong>Quan (Harry) Nguyen</strong>, et al.
             </p>
             <p class="pub-venue">
-              <em>IEEE International Symposium on Power Semiconductor Devices and ICs (ISPSD)</em>
+              <em>Conference Proceeding in preparation</em> — Forthcoming
             </p>
 
             <details class="pub-abstract-details">
               <summary class="pub-abstract-summary">
-                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-text">Abstract & Summary</span>
                 <span class="abstract-toggle-arrow">▾</span>
               </summary>
               <div class="pub-abstract-content">
                 <p>
-                  Edge termination efficiency directly dictates reverse blocking capability in vertical and lateral GaN
-                  power diodes. Utilizing Silvaco Atlas and Sentaurus TCAD 2D/3D numerical drift-diffusion simulations,
-                  junction termination extensions (JTE) combined with sub-micron dual field plates were simulated to
-                  smooth electric field crowding at anode perimeters. Experimental simulations demonstrate breakdown
-                  voltages exceeding 1400V with 94% junction efficiency.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua. Phasellus imperdiet, ipsum nec dictum feugiat, enim odio sollicitudin felis, non
+                  hendrerit est urna non libero. Mauris feugiat lacus vel lacus cursus, eu commodo massa laoreet. Proin
+                  pellentesque, sapien nec feugiat pharetra, ipsum erat finibus lacus, ac efficitur turpis nunc at quam.
                 </p>
               </div>
             </details>
 
             <div class="pub-actions">
-              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2025tcad">
+              <span class="pub-btn pub-btn-disabled">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <span>Copy BibTeX</span>
-              </button>
-              <a href="#" class="pub-btn pub-btn-link"
-                onclick="alert('ISPSD Paper details and PDF will be linked.'); return false;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-                <span>Proceedings Link</span>
-              </a>
+                <span>Coming Soon</span>
+              </span>
             </div>
           </article>
 
-          <!-- Publication 4 -->
-          <article class="pub-card" data-category="security">
+          <!-- Publication 4: Coming Soon -->
+          <article class="pub-card" data-category="coming-soon">
             <div class="pub-card-top">
-              <span class="pub-badge whitepaper">Technical Whitepaper</span>
-              <span class="pub-year">2027</span>
+              <span class="pub-badge coming-soon">Coming Soon</span>
+              <span class="pub-year">Forthcoming</span>
             </div>
             <h3 class="pub-title">
-              Hardware Security and Side-Channel Resilience for Microcontroller-Controlled Power Conversion Topologies
+              Coming Soon — Technical Whitepaper
             </h3>
             <p class="pub-authors">
-              <strong>Quan (Harry) Nguyen</strong>, UC eCTF MITRE Engineering Team
+              <strong>Quan (Harry) Nguyen</strong>, et al.
             </p>
             <p class="pub-venue">
-              <em>MITRE Embedded System Challenge (eCTF) Technical Whitepaper Series</em>
+              <em>Technical Report in preparation</em> — Forthcoming
             </p>
 
             <details class="pub-abstract-details">
               <summary class="pub-abstract-summary">
-                <span class="abstract-toggle-text">Abstract & Technical Summary</span>
+                <span class="abstract-toggle-text">Abstract & Summary</span>
                 <span class="abstract-toggle-arrow">▾</span>
               </summary>
               <div class="pub-abstract-content">
                 <p>
-                  As power electronics become tightly coupled with digital communication busses and IoT energy grids,
-                  cyber-physical security at the hardware layer is paramount. This whitepaper details physical
-                  side-channel power analysis (DPA) countermeasures, cryptographic key protection inside isolated flash
-                  sectors, and hardware-enforced memory protection units (MPU) for power converters under malicious
-                  firmware injection attacks.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. Integer nec odio.
+                  Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.
+                  Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa.
+                  Vestibulum lacinia arcu eget nulla.
                 </p>
               </div>
             </details>
 
             <div class="pub-actions">
-              <button type="button" class="pub-btn pub-btn-bibtex" data-bibtex="nguyen2027security">
+              <span class="pub-btn pub-btn-disabled">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <span>Copy BibTeX</span>
-              </button>
-              <a href="#" class="pub-btn pub-btn-link"
-                onclick="alert('MITRE eCTF repository & whitepaper repository.'); return false;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-                <span>Whitepaper PDF</span>
-              </a>
+                <span>Coming Soon</span>
+              </span>
             </div>
           </article>
         </div>
@@ -1637,7 +1415,7 @@
     <section id="info" class="content-section">
       <div class="section-container">
         <header class="section-header">
-          <p class="section-pretitle">04 / PROFILE & CONTACT</p>
+          <p class="section-pretitle">03 / PROFILE & CONTACT</p>
           <h2 class="section-title">Information</h2>
           <div class="section-rule"></div>
         </header>
@@ -1704,6 +1482,74 @@
         <footer class="site-footer">
           <p>© 2026 Quan (Harry) Nguyen. Centaurea cyanus — precision in another form.</p>
         </footer>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         THE ABYSS SHRINE (Scroll-Driven Hidden Realm after Info)
+         "Oh." / "Seems like you've reached the end." / "Or you've found me."
+         ========================================================================== -->
+    <section id="abyss" class="abyss-section" aria-label="End of the Journey">
+      <div class="abyss-backdrop" aria-hidden="true"></div>
+      <div class="abyss-stage">
+        <!-- Botanical Kornblume Petal Confetti Canvas -->
+        <canvas id="petalCanvas" aria-hidden="true"></canvas>
+
+        <div class="grain" aria-hidden="true"></div>
+
+        <div class="bell-viewport">
+          <div class="bell-container off" id="bellContainer" onclick="this.classList.toggle('off')" role="button"
+            aria-label="Ring the Shrine Bell" tabindex="0">
+            <div class="rope"></div>
+            <div class="bell-top"></div>
+
+            <div class="bell-base"></div>
+            <div class="bell-base"></div>
+            <div class="shadow-l1"></div>
+            <div class="shadow-l2"></div>
+            <div class="left-glow"></div>
+            <div class="left-glow2"></div>
+            <div class="r-glow"></div>
+            <div class="r-glow2"></div>
+            <div class="mid-ring"></div>
+            <div class="mid-ring small"></div>
+
+            <div class="glow"></div>
+            <div class="glow2"></div>
+
+            <div class="bell-buff-t"></div>
+            <div class="bell-buff"></div>
+
+            <div class="bell-btm"></div>
+            <div class="bell-btm2"></div>
+
+            <div class="bell-ring-container">
+              <div class="bell-ring"></div>
+              <div class="bell-rays"></div>
+            </div>
+
+            <div class="volumetric">
+              <div class="vl"></div>
+              <div class="vr"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIALOGUE EXPERIENCE -->
+        <div class="bell-dialogue-wrap" id="bellDialogueWrap" aria-live="polite">
+          <p class="dialogue-text dialogue-line-1" id="bellLine1">Oh, Greetings.</p>
+          <p class="dialogue-text" id="bellLine2">Seems like you've reached the <strong>end</strong>.</p>
+          <p class="dialogue-text" id="bellLine3">Or you've <strong>found</strong> me.</p>
+          <button type="button" class="bell-begin-cta" id="bellBeginBtn">
+            <svg class="bloom-svg" viewBox="0 0 1214 1204" aria-hidden="true">
+              <use href="#kornblume-bloom-sym" />
+            </svg>
+            <span class="bell-begin-text">Let's get started, shall we?</span>
+            <svg class="bloom-svg" viewBox="0 0 1214 1204" aria-hidden="true">
+              <use href="#kornblume-bloom-sym" />
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
   </main>
@@ -1786,10 +1632,13 @@ void main() {
 }
   </script>
 
+  <!-- Seamless Teleport Blackout Overlay -->
+  <div class="teleport-blackout" id="teleportBlackout" aria-hidden="true"></div>
+
   <script src="assets/gsap.min.js"></script>
   <script src="assets/ScrollTrigger.min.js"></script>
   <script src="assets/Draggable.min.js"></script>
-  <script src="script.js?v=2.2.0"></script>
+  <script src="script.js?v=2.3.0"></script>
 </body>
 
 </html>

@@ -1204,208 +1204,198 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollytellingExhibition();
 
   // ==========================================================================
-  // ROADMAP SECTION INTERACTIVITY (Rotary Wheel + Details/Summary Viewer)
-  // Milestones from 2024 to 2030+ with Kornblume Botanical Imagery
+  // ROADMAP SECTION INTERACTIVITY (Guarded)
   // ==========================================================================
-  // Generate Clock Dial Graduation Ticks (matching Image 1 mock)
-  const clockSvg = document.getElementById('clockTicksSvg');
-  if (clockSvg) {
-    const totalTicks = 60;
-    const rOuter = 240;
-    let ticksHtml = '';
+  const roadmapSection = document.getElementById('roadmap');
+  if (roadmapSection) {
+    const clockSvg = document.getElementById('clockTicksSvg');
+    if (clockSvg) {
+      const totalTicks = 60;
+      const rOuter = 240;
+      let ticksHtml = '';
 
-    for (let i = 0; i < totalTicks; i++) {
-      const angle = (i * 360) / totalTicks;
-      const isMajor = (i % 5 === 0);
-      const tickLength = isMajor ? 14 : 7;
-      const rInner = rOuter - tickLength;
-      const strokeWidth = isMajor ? 2 : 1;
-      const strokeColor = isMajor ? 'rgba(78, 137, 223, 0.75)' : 'rgba(255, 255, 255, 0.22)';
+      for (let i = 0; i < totalTicks; i++) {
+        const angle = (i * 360) / totalTicks;
+        const isMajor = (i % 5 === 0);
+        const tickLength = isMajor ? 14 : 7;
+        const rInner = rOuter - tickLength;
+        const strokeWidth = isMajor ? 2 : 1;
+        const strokeColor = isMajor ? 'rgba(78, 137, 223, 0.75)' : 'rgba(255, 255, 255, 0.22)';
 
-      ticksHtml += `<line x1="0" y1="${-rOuter}" x2="0" y2="${-rInner}" stroke="${strokeColor}" stroke-width="${strokeWidth}" transform="rotate(${angle})" />`;
-    }
-    // Outer dial circle
-    ticksHtml += `<circle cx="0" cy="0" r="${rOuter}" fill="none" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2" />`;
-    // Inner accent dashed ring
-    ticksHtml += `<circle cx="0" cy="0" r="${rOuter - 22}" fill="none" stroke="rgba(78, 137, 223, 0.18)" stroke-width="1" stroke-dasharray="3 4" />`;
-    clockSvg.innerHTML = ticksHtml;
-  }
-
-  const roadmapData = [
-    {
-      year: '2024',
-      badge: 'Foundational STEM',
-      title: 'Nguyen Thuong Hien High School',
-      subtitle: 'STEM Foundations & Advanced Physics Olympiad',
-      summary: 'Advanced Physics & Mathematics curriculum at Nguyen Thuong Hien High School for the Gifted. Built deep foundational analytical rigor in semiconductor physics, electronic principles, and algorithmic problem-solving for national academic Olympiads.',
-      project: 'High-School Physics Demonstrator & Automated Sensor Rig — designed analog sensor interfaces, automated relay circuits, and scientific calculation software that catalyzed entry into international engineering programs.',
-      future: 'Transition to university-level solid-state physics, wide-bandgap materials, and high-frequency electronic device characterization in the United States.'
-    },
-    {
-      year: '2025',
-      badge: 'Higher Education',
-      title: 'University of Cincinnati',
-      subtitle: "B.S. Electrical Engineering ('30)",
-      summary: 'College of Engineering and Applied Science (CEAS), University of Cincinnati. Comprehensive coursework in Solid-State Electronics, Semiconductor Device Physics, Signals & Systems, Linear Systems, and Microelectronic Fabrication.',
-      project: 'Automated Benchtop Parameter Extraction Suite — developed Python (PyVISA) automation routines interfacing with Keysight SMUs and LCR meters for high-throughput Vth, subthreshold swing, and C-V profiling.',
-      future: 'Enrollment in the accelerated dual B.S./M.S. ACCEND track and competitive selection for national embedded security initiatives.'
-    },
-    {
-      year: '2026',
-      badge: 'Wide-Bandgap Research',
-      title: 'NYCU x Foxconn Research Institute',
-      subtitle: 'Joint Semiconductor Research Program',
-      summary: 'Collaborative research fellowship between National Yang Ming Chiao Tung University (NYCU) & Foxconn Semiconductor Research Center. Deep research into Wide-Bandgap Power Semiconductor Devices, GaN HEMT Breakdown Characterization, and High-Voltage SiC Power Modules.',
-      project: 'Dynamic RDS(on) Trap Kinetics & Double-Pulse Testbench — built double-pulse inductive switching testbed for 1200V SiC MOSFETs; conducted Sentaurus TCAD multi-physics simulations to mitigate current collapse in AlGaN/GaN HEMTs.',
-      future: 'Publication in IEEE power electronics journals and technical leadership in hardware-secure wide-bandgap applications.'
-    },
-    {
-      year: '2027',
-      badge: 'Hardware Security',
-      title: 'eCTF MITRE Representative of UC + UC ACCEND',
-      subtitle: "Embedded Hardware Security & Dual Master's Track",
-      summary: 'Selected as University of Cincinnati Team Representative for the prestigious MITRE Embedded System Challenge (eCTF). Dual-degree enrollment in UC ACCEND (accelerated B.S. + M.S. in Electrical Engineering).',
-      project: 'Cryptographic Hardware Root-of-Trust & Side-Channel Shielding — architected bare-metal secure bootloaders, cryptographic coprocessors on FPGA, and power-analysis countermeasures for resilient power grid microcontrollers.',
-      future: 'Securing the DAAD RISE Germany Fellowship for international research in cutting-edge semiconductor physical analysis.'
-    },
-    {
-      year: '2028',
-      badge: 'International Fellowship',
-      title: 'Germany DAAD RISE Planning',
-      subtitle: 'International Semiconductor Research Fellowship',
-      summary: 'DAAD RISE (Research Internships in Science and Engineering) Fellowship in Germany. Embedded at premier German semiconductor research institutions (Fraunhofer IAF / RWTH Aachen / TU Munich) exploring advanced compound semiconductor epitaxy and thermal dynamics.',
-      project: 'High-Power GaN-on-Si Epitaxy & Thermal Profiling — conducted micro-Raman thermography, Hall-effect carrier mobility measurements, and high-temperature stress testing of next-generation power switches.',
-      future: "Translating experimental European semiconductor datasets into master's thesis research and industrial co-op development."
-    },
-    {
-      year: '2029',
-      badge: 'Advanced Co-op',
-      title: 'Coming Soon',
-      subtitle: 'Advanced Co-op & High-Density Power Packaging',
-      summary: 'Advanced Industry Co-op focusing on high-density power module integration, heterogeneous semiconductor packaging, and wide-bandgap gate-driver topologies for automotive EV traction inverters.',
-      project: 'Monolithic Multi-Level GaN Converter Prototype — designed ultra-low parasitic inductance PCB layouts (< 1 nH loop inductance) achieving > 100 V/ns slew rates without spurious turn-on.',
-      future: "Defending ACCEND master's thesis and transitioning directly into doctoral research in Ultra-Wide-Bandgap (UWBG) semiconductors."
-    },
-    {
-      year: '2030+',
-      badge: 'Frontier Research',
-      title: 'UWBG / WBG Research',
-      subtitle: 'Ultra-Wide-Bandgap Semiconductors & Next-Gen Power',
-      summary: 'Pioneering the extreme frontiers of Ultra-Wide-Bandgap (UWBG) materials: Gallium Oxide (β-Ga2O3, 4.8 eV), Diamond (5.5 eV), and Aluminum Nitride (AlN, 6.2 eV) for high-efficiency grid infrastructure, aerospace, and megawatt converters.',
-      project: 'Multi-Kilovolt Edge-Termination & Deep-Level Defect Spectroscopy — modeling field-limiting rings and superjunction concepts capable of exceeding 10 kV blocking voltage with record-low specific on-resistance.',
-      future: 'Leading advanced semiconductor R&D laboratories, advancing national power infrastructure resilience, and shaping the future of global energy conversion.'
-    }
-  ];
-
-  // Milestone and Topic State Controller
-  let currentMilestoneIdx = 0;
-  let currentTopicIdx = 0;
-
-  const topicsMeta = [
-    { name: 'Details & Summary', key: 'summary' },
-    { name: 'Project Built', key: 'project' },
-    { name: 'In future', key: 'future' }
-  ];
-
-  const wheelRadios = document.querySelectorAll('input[name="wheel-year"]');
-  const wheelCardsUl = document.querySelector('.roadmap-section .cards');
-  const activeBadge = document.getElementById('activeMilestoneBadge');
-  const activeYear = document.getElementById('activeMilestoneYear');
-  const activeTitle = document.getElementById('activeMilestoneTitle');
-  const activeSubtitle = document.getElementById('activeMilestoneSubtitle');
-  const activeTopicName = document.getElementById('activeTopicName');
-  const roadmapTopicContent = document.getElementById('roadmapTopicContent');
-  const topicTabs = document.querySelectorAll('.topic-pill-tab');
-  const imgSlides = document.querySelectorAll('.picker-img-slide');
-  const prevTopicBtn = document.getElementById('prevTopicBtn');
-  const nextTopicBtn = document.getElementById('nextTopicBtn');
-
-  function renderRoadmap() {
-    const item = roadmapData[currentMilestoneIdx];
-    if (!item) return;
-
-    // Update Rotary Wheel Rotation
-    if (wheelCardsUl) {
-      wheelCardsUl.style.setProperty('--index', currentMilestoneIdx);
-    }
-    if (wheelRadios[currentMilestoneIdx]) {
-      wheelRadios[currentMilestoneIdx].checked = true;
-    }
-
-    // Update Milestone Info Header
-    if (activeBadge) activeBadge.textContent = item.badge;
-    if (activeYear) activeYear.textContent = item.year;
-    if (activeTitle) activeTitle.textContent = item.title;
-    if (activeSubtitle) activeSubtitle.textContent = item.subtitle;
-
-    // Update Active Topic Name
-    const topicMeta = topicsMeta[currentTopicIdx];
-    if (activeTopicName) activeTopicName.textContent = topicMeta.name;
-
-    // Smoothly Fade & Update Active Topic Content
-    if (roadmapTopicContent) {
-      roadmapTopicContent.style.opacity = '0';
-      setTimeout(() => {
-        roadmapTopicContent.textContent = item[topicMeta.key];
-        roadmapTopicContent.style.opacity = '1';
-      }, 150);
-    }
-
-    // Update Topic Picker Tabs on Right Side
-    topicTabs.forEach((tab, idx) => {
-      if (idx === currentTopicIdx) {
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-      } else {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
+        ticksHtml += `<line x1="0" y1="${-rOuter}" x2="0" y2="${-rInner}" stroke="${strokeColor}" stroke-width="${strokeWidth}" transform="rotate(${angle})" />`;
       }
+      // Outer dial circle
+      ticksHtml += `<circle cx="0" cy="0" r="${rOuter}" fill="none" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2" />`;
+      // Inner accent dashed ring
+      ticksHtml += `<circle cx="0" cy="0" r="${rOuter - 22}" fill="none" stroke="rgba(78, 137, 223, 0.18)" stroke-width="1" stroke-dasharray="3 4" />`;
+      clockSvg.innerHTML = ticksHtml;
+    }
+
+    const roadmapData = [
+      {
+        year: '2024',
+        badge: 'Foundational STEM',
+        title: 'Nguyen Thuong Hien High School',
+        subtitle: 'STEM Foundations & Advanced Physics Olympiad',
+        summary: 'Advanced Physics & Mathematics curriculum at Nguyen Thuong Hien High School for the Gifted. Built deep foundational analytical rigor in semiconductor physics, electronic principles, and algorithmic problem-solving for national academic Olympiads.',
+        project: 'High-School Physics Demonstrator & Automated Sensor Rig — designed analog sensor interfaces, automated relay circuits, and scientific calculation software that catalyzed entry into international engineering programs.',
+        future: 'Transition to university-level solid-state physics, wide-bandgap materials, and high-frequency electronic device characterization in the United States.'
+      },
+      {
+        year: '2025',
+        badge: 'Higher Education',
+        title: 'University of Cincinnati',
+        subtitle: "B.S. Electrical Engineering ('30)",
+        summary: 'College of Engineering and Applied Science (CEAS), University of Cincinnati. Comprehensive coursework in Solid-State Electronics, Semiconductor Device Physics, Signals & Systems, Linear Systems, and Microelectronic Fabrication.',
+        project: 'Automated Benchtop Parameter Extraction Suite — developed Python (PyVISA) automation routines interfacing with Keysight SMUs and LCR meters for high-throughput Vth, subthreshold swing, and C-V profiling.',
+        future: 'Enrollment in the accelerated dual B.S./M.S. ACCEND track and competitive selection for national embedded security initiatives.'
+      },
+      {
+        year: '2026',
+        badge: 'Wide-Bandgap Research',
+        title: 'NYCU x Foxconn Research Institute',
+        subtitle: 'Joint Semiconductor Research Program',
+        summary: 'Collaborative research fellowship between National Yang Ming Chiao Tung University (NYCU) & Foxconn Semiconductor Research Center. Deep research into Wide-Bandgap Power Semiconductor Devices, GaN HEMT Breakdown Characterization, and High-Voltage SiC Power Modules.',
+        project: 'Dynamic RDS(on) Trap Kinetics & Double-Pulse Testbench — built double-pulse inductive switching testbed for 1200V SiC MOSFETs; conducted Sentaurus TCAD multi-physics simulations to mitigate current collapse in AlGaN/GaN HEMTs.',
+        future: 'Publication in IEEE power electronics journals and technical leadership in hardware-secure wide-bandgap applications.'
+      },
+      {
+        year: '2027',
+        badge: 'Hardware Security',
+        title: 'eCTF MITRE Representative of UC + UC ACCEND',
+        subtitle: "Embedded Hardware Security & Dual Master's Track",
+        summary: 'Selected as University of Cincinnati Team Representative for the prestigious MITRE Embedded System Challenge (eCTF). Dual-degree enrollment in UC ACCEND (accelerated B.S. + M.S. in Electrical Engineering).',
+        project: 'Cryptographic Hardware Root-of-Trust & Side-Channel Shielding — architected bare-metal secure bootloaders, cryptographic coprocessors on FPGA, and power-analysis countermeasures for resilient power grid microcontrollers.',
+        future: 'Securing the DAAD RISE Germany Fellowship for international research in cutting-edge semiconductor physical analysis.'
+      },
+      {
+        year: '2028',
+        badge: 'International Fellowship',
+        title: 'Germany DAAD RISE Planning',
+        subtitle: 'International Semiconductor Research Fellowship',
+        summary: 'DAAD RISE (Research Internships in Science and Engineering) Fellowship in Germany. Embedded at premier German semiconductor research institutions (Fraunhofer IAF / RWTH Aachen / TU Munich) exploring advanced compound semiconductor epitaxy and thermal dynamics.',
+        project: 'High-Power GaN-on-Si Epitaxy & Thermal Profiling — conducted micro-Raman thermography, Hall-effect carrier mobility measurements, and high-temperature stress testing of next-generation power switches.',
+        future: "Translating experimental European semiconductor datasets into master's thesis research and industrial co-op development."
+      },
+      {
+        year: '2029',
+        badge: 'Advanced Co-op',
+        title: 'Coming Soon',
+        subtitle: 'Advanced Co-op & High-Density Power Packaging',
+        summary: 'Advanced Industry Co-op focusing on high-density power module integration, heterogeneous semiconductor packaging, and wide-bandgap gate-driver topologies for automotive EV traction inverters.',
+        project: 'Monolithic Multi-Level GaN Converter Prototype — designed ultra-low parasitic inductance PCB layouts (< 1 nH loop inductance) achieving > 100 V/ns slew rates without spurious turn-on.',
+        future: "Defending ACCEND master's thesis and transitioning directly into doctoral research in Ultra-Wide-Bandgap (UWBG) semiconductors."
+      },
+      {
+        year: '2030+',
+        badge: 'Frontier Research',
+        title: 'UWBG / WBG Research',
+        subtitle: 'Ultra-Wide-Bandgap Semiconductors & Next-Gen Power',
+        summary: 'Pioneering the extreme frontiers of Ultra-Wide-Bandgap (UWBG) materials: Gallium Oxide (β-Ga2O3, 4.8 eV), Diamond (5.5 eV), and Aluminum Nitride (AlN, 6.2 eV) for high-efficiency grid infrastructure, aerospace, and megawatt converters.',
+        project: 'Multi-Kilovolt Edge-Termination & Deep-Level Defect Spectroscopy — modeling field-limiting rings and superjunction concepts capable of exceeding 10 kV blocking voltage with record-low specific on-resistance.',
+        future: 'Leading advanced semiconductor R&D laboratories, advancing national power infrastructure resilience, and shaping the future of global energy conversion.'
+      }
+    ];
+
+    let currentMilestoneIdx = 0;
+    let currentTopicIdx = 0;
+
+    const topicsMeta = [
+      { name: 'Details & Summary', key: 'summary' },
+      { name: 'Project Built', key: 'project' },
+      { name: 'In future', key: 'future' }
+    ];
+
+    const wheelRadios = document.querySelectorAll('input[name="wheel-year"]');
+    const wheelCardsUl = document.querySelector('.roadmap-section .cards');
+    const activeBadge = document.getElementById('activeMilestoneBadge');
+    const activeYear = document.getElementById('activeMilestoneYear');
+    const activeTitle = document.getElementById('activeMilestoneTitle');
+    const activeSubtitle = document.getElementById('activeMilestoneSubtitle');
+    const activeTopicName = document.getElementById('activeTopicName');
+    const roadmapTopicContent = document.getElementById('roadmapTopicContent');
+    const topicTabs = document.querySelectorAll('.topic-pill-tab');
+    const imgSlides = document.querySelectorAll('.picker-img-slide');
+    const prevTopicBtn = document.getElementById('prevTopicBtn');
+    const nextTopicBtn = document.getElementById('nextTopicBtn');
+
+    function renderRoadmap() {
+      const item = roadmapData[currentMilestoneIdx];
+      if (!item) return;
+
+      if (wheelCardsUl) {
+        wheelCardsUl.style.setProperty('--index', currentMilestoneIdx);
+      }
+      if (wheelRadios[currentMilestoneIdx]) {
+        wheelRadios[currentMilestoneIdx].checked = true;
+      }
+
+      if (activeBadge) activeBadge.textContent = item.badge;
+      if (activeYear) activeYear.textContent = item.year;
+      if (activeTitle) activeTitle.textContent = item.title;
+      if (activeSubtitle) activeSubtitle.textContent = item.subtitle;
+
+      const topicMeta = topicsMeta[currentTopicIdx];
+      if (activeTopicName) activeTopicName.textContent = topicMeta.name;
+
+      if (roadmapTopicContent) {
+        roadmapTopicContent.style.opacity = '0';
+        setTimeout(() => {
+          roadmapTopicContent.textContent = item[topicMeta.key];
+          roadmapTopicContent.style.opacity = '1';
+        }, 150);
+      }
+
+      topicTabs.forEach((tab, idx) => {
+        if (idx === currentTopicIdx) {
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+        } else {
+          tab.classList.remove('active');
+          tab.setAttribute('aria-selected', 'false');
+        }
+      });
+
+      imgSlides.forEach((slide, idx) => {
+        if (idx === currentTopicIdx) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+    }
+
+    topicTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const idx = parseInt(tab.getAttribute('data-topic'), 10);
+        if (!isNaN(idx)) {
+          currentTopicIdx = idx;
+          renderRoadmap();
+        }
+      });
     });
 
-    // Update Visual Background Slide on Right Side
-    imgSlides.forEach((slide, idx) => {
-      if (idx === currentTopicIdx) {
-        slide.classList.add('active');
-      } else {
-        slide.classList.remove('active');
-      }
+    prevTopicBtn?.addEventListener('click', () => {
+      currentTopicIdx = (currentTopicIdx - 1 + topicsMeta.length) % topicsMeta.length;
+      renderRoadmap();
     });
-  }
 
-  // Topic Tab Click Handlers (Topic Picking on Right Side)
-  topicTabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const idx = parseInt(tab.getAttribute('data-topic'), 10);
-      if (!isNaN(idx)) {
-        currentTopicIdx = idx;
-        renderRoadmap();
-      }
+    nextTopicBtn?.addEventListener('click', () => {
+      currentTopicIdx = (currentTopicIdx + 1) % topicsMeta.length;
+      renderRoadmap();
     });
-  });
 
-  // Topic Stepper Previous / Next Handlers
-  prevTopicBtn?.addEventListener('click', () => {
-    currentTopicIdx = (currentTopicIdx - 1 + topicsMeta.length) % topicsMeta.length;
+    wheelRadios.forEach((radio, idx) => {
+      radio.addEventListener('change', () => {
+        if (radio.checked) {
+          currentMilestoneIdx = idx;
+          renderRoadmap();
+        }
+      });
+    });
+
     renderRoadmap();
-  });
-
-  nextTopicBtn?.addEventListener('click', () => {
-    currentTopicIdx = (currentTopicIdx + 1) % topicsMeta.length;
-    renderRoadmap();
-  });
-
-  // Wheel Year Change Handler
-  wheelRadios.forEach((radio, idx) => {
-    radio.addEventListener('change', () => {
-      if (radio.checked) {
-        currentMilestoneIdx = idx;
-        renderRoadmap();
-      }
-    });
-  });
-
-  // Initialize Roadmap Display
-  renderRoadmap();
+  }
 
   // ==========================================================================
   // PUBLICATIONS SECTION INTERACTIVITY (Category Filter & BibTeX Copy)
@@ -1424,8 +1414,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const filterVal = pill.getAttribute('data-filter');
       pubCards.forEach(card => {
-        const cat = card.getAttribute('data-category');
-        if (filterVal === 'all' || cat === filterVal) {
+        const cat = card.getAttribute('data-category') || '';
+        const cats = cat.split(/\s+/);
+        if (filterVal === 'all' || cats.includes(filterVal)) {
           card.classList.remove('is-hidden');
         } else {
           card.classList.add('is-hidden');
@@ -1436,30 +1427,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // BibTeX Database
   const bibtexEntries = {
-    nguyen2026dynamic: `@article{nguyen2026dynamic,
-  title={Dynamic RDS(on) Trapping Kinetics and Gate-Lag Degradation in High-Voltage AlGaN/GaN HEMTs Under Severe Electric Field Stress},
-  author={Nguyen, Quan and Joint Semiconductor Research Group},
-  journal={IEEE Transactions on Electron Devices},
-  year={2026},
-  note={Under Peer Review}
-}`,
-    nguyen2026sic: `@inproceedings{nguyen2026sic,
-  title={Switching Reliability and Body-Diode Degradation in 1.2 kV SiC Power MOSFETs Subjected to Repetitive Double-Pulse Stress},
-  author={Nguyen, Quan},
-  booktitle={IEEE Applied Power Electronics Conference and Exposition (APEC)},
-  year={2026}
-}`,
-    nguyen2025tcad: `@inproceedings{nguyen2025tcad,
-  title={Numerical Field-Plate Optimization and Edge-Termination for Nanoscale High-Breakdown GaN Power Diodes},
-  author={Nguyen, Quan},
-  booktitle={IEEE International Symposium on Power Semiconductor Devices and ICs (ISPSD)},
-  year={2025}
-}`,
-    nguyen2027security: `@techreport{nguyen2027security,
-  title={Hardware Security and Side-Channel Resilience for Microcontroller-Controlled Power Conversion Topologies},
-  author={Nguyen, Quan},
-  institution={MITRE Embedded System Challenge (eCTF)},
-  year={2027}
+    phong2024classification: `@article{phong2024classification,
+  title={Classification of Plant Leaves and Flowers Using Image Processing and Deep Neural Networks},
+  author={Phong, Bui Hai and Tri, Huynh Minh and Quan, Nguyen Chi Anh and Minh, Nguyen Quang and Chuong, Le Anh},
+  journal={International Journal of Advanced Research in Computer Science},
+  volume={15},
+  number={5},
+  pages={34--37},
+  year={2024},
+  publisher={IJARCS},
+  doi={10.26483/ijarcs.v15i5.7137},
+  url={https://doi.org/10.26483/ijarcs.v15i5.7137}
 }`
   };
 
@@ -1844,5 +1822,321 @@ document.addEventListener('DOMContentLoaded', () => {
   initCurvedScrollbars();
   initProjectFeatureShowcase();
   initRotatingText();
+  initBlueBellDialogue();
   animateAmbient();
+
+  // ==========================================================================
+  // THE ABYSS SHRINE: SCROLL-DRIVEN BLUE BELL & TELEPORT DIALOGUE
+  // "Oh." / "Seems like you've reached the end." / "Or you've found me."
+  // "Let's get started, shall we?"
+  // ==========================================================================
+  function initBlueBellDialogue() {
+    const abyssSec = document.getElementById('abyss');
+    const bellContainer = document.getElementById('bellContainer');
+    const dialogueWrap = document.getElementById('bellDialogueWrap');
+    const line1 = document.getElementById('bellLine1');
+    const line2 = document.getElementById('bellLine2');
+    const line3 = document.getElementById('bellLine3');
+    const beginBtn = document.getElementById('bellBeginBtn');
+    const blackout = document.getElementById('teleportBlackout');
+    const siteHeader = document.querySelector('.site-header');
+    const canvas = document.getElementById('petalCanvas');
+
+    // Bypass intro mode only if visitor navigated directly to a specific section hash
+    if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#abyss' && window.location.hash !== '#home') {
+      document.body.classList.remove('intro-bell-mode');
+    }
+
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    if (!bellContainer) return;
+
+    let dialogueTimers = [];
+
+    function clearDialogueTimers() {
+      dialogueTimers.forEach(t => clearTimeout(t));
+      dialogueTimers = [];
+    }
+
+    // =========================================================================
+    // KORNBLUME PETAL CONFETTI ENGINE
+    // =========================================================================
+    let ctx = null;
+    let petals = [];
+    let isPetalAnimActive = false;
+
+    const petalColors = [
+      '#1d4ed8', // deep royal cornflower
+      '#2563eb', // vivid azure
+      '#3b82f6', // signature cornflower blue
+      '#60a5fa', // bright sky cyan
+      '#93c5fd', // forget-me-not blue
+      '#bfdbfe'  // luminous petal highlight
+    ];
+
+    if (canvas) {
+      ctx = canvas.getContext('2d');
+      const resizeCanvas = () => {
+        if (canvas.parentElement) {
+          canvas.width = canvas.parentElement.clientWidth;
+          canvas.height = canvas.parentElement.clientHeight;
+        }
+      };
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+    }
+
+    class KornblumePetal {
+      constructor(originX, originY) {
+        this.x = originX + (Math.random() - 0.5) * 60;
+        this.y = originY + (Math.random() - 0.5) * 20;
+
+        // Random velocity bursting outward
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5.5 + 2.2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 2.5; // slight upward lift
+
+        this.size = Math.random() * 8 + 8; // petal length
+        this.aspect = Math.random() * 0.4 + 0.35; // width ratio
+        this.rotation = Math.random() * Math.PI * 2;
+        this.vRot = (Math.random() - 0.5) * 0.12;
+        this.vFlutter = Math.random() * 0.15 + 0.05;
+        this.flutterPhase = Math.random() * Math.PI * 2;
+
+        this.color = petalColors[Math.floor(Math.random() * petalColors.length)];
+        this.alpha = 1;
+        this.decay = Math.random() * 0.008 + 0.009; // ~1.5 - 2s lifespan
+        this.gravity = 0.085;
+        this.drag = 0.965;
+      }
+
+      update() {
+        this.vx *= this.drag;
+        this.vy = this.vy * this.drag + this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        this.rotation += this.vRot;
+        this.flutterPhase += this.vFlutter;
+        this.alpha -= this.decay;
+        return this.alpha > 0;
+      }
+
+      draw(c) {
+        c.save();
+        c.translate(this.x, this.y);
+        c.rotate(this.rotation);
+
+        // 3D flutter perspective effect
+        const scaleX = Math.cos(this.flutterPhase);
+        c.scale(scaleX, 1);
+
+        c.globalAlpha = Math.max(0, this.alpha);
+        c.fillStyle = this.color;
+        c.shadowColor = this.color;
+        c.shadowBlur = 6;
+
+        // Draw botanical Kornblume ray floret petal shape with notched crown
+        const w = this.size * this.aspect;
+        const h = this.size;
+
+        c.beginPath();
+        c.moveTo(0, h * 0.5); // base
+        c.bezierCurveTo(-w * 0.5, h * 0.1, -w, -h * 0.2, -w * 0.8, -h * 0.4);
+        // Notched crown teeth
+        c.lineTo(-w * 0.4, -h * 0.35);
+        c.lineTo(0, -h * 0.5); // center crown peak
+        c.lineTo(w * 0.4, -h * 0.35);
+        c.lineTo(w * 0.8, -h * 0.4);
+        c.bezierCurveTo(w, -h * 0.2, w * 0.5, h * 0.1, 0, h * 0.5);
+        c.closePath();
+        c.fill();
+
+        c.restore();
+      }
+    }
+
+    function animatePetals() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = petals.length - 1; i >= 0; i--) {
+        const alive = petals[i].update();
+        if (alive) {
+          petals[i].draw(ctx);
+        } else {
+          petals.splice(i, 1);
+        }
+      }
+
+      if (petals.length > 0) {
+        requestAnimationFrame(animatePetals);
+      } else {
+        isPetalAnimActive = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function triggerPetalConfetti(customX, customY) {
+      if (!canvas || !beginBtn) return;
+      const rect = beginBtn.getBoundingClientRect();
+      const stageRect = canvas.getBoundingClientRect();
+
+      const originX = customX !== undefined ? customX : (rect.left + rect.width / 2 - stageRect.left);
+      const originY = customY !== undefined ? customY : (rect.top + rect.height / 2 - stageRect.top);
+
+      // Burst 22 - 28 petals
+      const count = Math.floor(Math.random() * 7) + 22;
+      for (let i = 0; i < count; i++) {
+        petals.push(new KornblumePetal(originX, originY));
+      }
+
+      if (!isPetalAnimActive) {
+        isPetalAnimActive = true;
+        requestAnimationFrame(animatePetals);
+      }
+    }
+
+    // Trigger bloom confetti on hover / focus
+    if (beginBtn) {
+      beginBtn.addEventListener('mouseenter', (e) => {
+        if (!canvas) return;
+        const stageRect = canvas.getBoundingClientRect();
+        triggerPetalConfetti(e.clientX - stageRect.left, e.clientY - stageRect.top);
+      });
+    }
+
+    let ignitionTimer = null;
+    function handleBellState() {
+      clearDialogueTimers();
+      if (ignitionTimer) {
+        clearTimeout(ignitionTimer);
+        ignitionTimer = null;
+      }
+
+      const isOff = bellContainer.classList.contains('off');
+      if (isOff) {
+        bellContainer.classList.remove('igniting');
+        if (dialogueWrap) dialogueWrap.classList.remove('is-visible');
+        if (line1) line1.classList.remove('show');
+        if (line2) line2.classList.remove('show');
+        if (line3) line3.classList.remove('show');
+        if (beginBtn) beginBtn.classList.remove('show');
+      } else {
+        // Dramatic lamp ignition flicker strike
+        bellContainer.classList.add('igniting');
+        ignitionTimer = setTimeout(() => {
+          bellContainer.classList.remove('igniting');
+        }, 650);
+
+        if (dialogueWrap) dialogueWrap.classList.add('is-visible');
+        // Reduced speed / slower graceful cadence
+        dialogueTimers.push(setTimeout(() => { if (line1) line1.classList.add('show'); }, 700));
+        dialogueTimers.push(setTimeout(() => { if (line2) line2.classList.add('show'); }, 2400));
+        dialogueTimers.push(setTimeout(() => { if (line3) line3.classList.add('show'); }, 4200));
+        dialogueTimers.push(setTimeout(() => {
+          if (beginBtn) {
+            beginBtn.classList.add('show');
+            // Automatic gentle opening petal burst
+            triggerPetalConfetti();
+          }
+        }, 5900));
+      }
+    }
+
+    // Direct click to ring the bell/lamp
+    bellContainer.addEventListener('click', () => {
+      setTimeout(handleBellState, 10);
+    });
+
+    // Keyboard support (Enter / Space)
+    bellContainer.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        bellContainer.classList.toggle('off');
+        handleBellState();
+      }
+    });
+
+    // Scroll-driven trigger: As user scrolls past Info into Abyss
+    if (abyssSec) {
+      const handleAbyssScroll = () => {
+        const rect = abyssSec.getBoundingClientRect();
+        const winHeight = window.innerHeight;
+
+        // Progress of abyss entering the viewport
+        if (rect.top <= winHeight && rect.bottom >= 0) {
+          const progress = Math.min(1, Math.max(0, (winHeight - rect.top) / (winHeight * 0.75)));
+
+          // Header fades out as darkness envelops the page
+          if (siteHeader) {
+            siteHeader.style.opacity = `${Math.max(0, 1 - progress * 1.5)}`;
+            siteHeader.style.pointerEvents = progress > 0.4 ? 'none' : 'auto';
+          }
+
+          // Bell gently slides down into view
+          const yOffset = (1 - progress) * -60;
+          bellContainer.style.transform = `translateY(${yOffset}px)`;
+          bellContainer.style.opacity = `${0.2 + progress * 0.8}`;
+        } else if (rect.top > winHeight) {
+          // Reset header when scrolled above abyss
+          if (siteHeader) {
+            siteHeader.style.opacity = '';
+            siteHeader.style.pointerEvents = '';
+          }
+          bellContainer.style.transform = `translateY(-60px)`;
+          bellContainer.style.opacity = '0.2';
+        }
+      };
+
+      window.addEventListener('scroll', handleAbyssScroll, { passive: true });
+      handleAbyssScroll();
+    }
+
+    // "Let's get started, shall we?" Teleport Transition (Darkens & returns to first page, Home)
+    if (beginBtn && blackout) {
+      beginBtn.addEventListener('click', () => {
+        // Step 1: Smooth blackout fade
+        blackout.classList.add('is-active');
+
+        // Step 2: Teleport to Home once fully darkened (no visible scrolling)
+        setTimeout(() => {
+          // Exit prologue / intro bell mode if active
+          document.body.classList.remove('intro-bell-mode');
+
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
+          const homeNav = document.querySelector('.nav-link[data-section="home"]');
+          if (homeNav) {
+            setActiveNav(homeNav);
+          }
+
+          // Restore header visibility
+          if (siteHeader) {
+            siteHeader.style.opacity = '';
+            siteHeader.style.pointerEvents = '';
+            siteHeader.style.visibility = '';
+          }
+
+          // Reset bell state for future visits
+          bellContainer.classList.add('off');
+          handleBellState();
+
+          // Refresh canvas size after leaving fixed mode
+          if (canvas && canvas.parentElement) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+          }
+
+          // Step 3: Fade black overlay away, revealing Home
+          setTimeout(() => {
+            blackout.classList.remove('is-active');
+          }, 350);
+        }, 650);
+      });
+    }
+  }
 });
