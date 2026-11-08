@@ -10,3 +10,7 @@ Thumbs.db
 Hot Swap/.orig_backup/
 Hot Swap/.true_original_48v.png
 
+
+# Local workspace backups
+backups/
+

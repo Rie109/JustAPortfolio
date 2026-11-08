@@ -218,11 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     workStrip.classList.add('is-locked');
+    const researchSec = document.getElementById('research');
+    if (researchSec) researchSec.classList.add('has-locked-card');
   }
 
   function unlockAllCards() {
     if (!workStrip) return;
     workStrip.classList.remove('is-locked');
+    const researchSec = document.getElementById('research');
+    if (researchSec) researchSec.classList.remove('has-locked-card');
     expandCards.forEach((c) => {
       c.classList.remove('is-locked-card');
       c.setAttribute('aria-expanded', 'false');
@@ -248,9 +252,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Safe zone protection: The header height + margin so navigation
   // and cursor movements across the top of the viewport NEVER trigger cards underneath,
-  // capped at 115px max so it never invades the card content area
+  // Protection: header zone prevents accidental clicks
   function isInHeaderSafeZone(e) {
-    if (!e) return false;
+    if (!e || typeof e.clientY !== 'number') return false;
+    if (window.innerWidth <= 1024) {
+      const headerBottom = header ? header.getBoundingClientRect().bottom : 56;
+      return e.clientY <= headerBottom;
+    }
     const headerBottom = header ? Math.min(header.getBoundingClientRect().bottom, 80) : 80;
     return e.clientY <= Math.min(headerBottom + 35, 115);
   }
@@ -420,6 +428,20 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           targetElement.scrollIntoView({ behavior: 'smooth' });
           setActiveNav(link);
+          if (targetId === '#publications') {
+            if (typeof window.resetCinematicBloom === 'function') {
+              window.resetCinematicBloom();
+            }
+            setTimeout(() => {
+              if (typeof window.startDialogueSequence === 'function') {
+                window.startDialogueSequence(true);
+              }
+            }, 320);
+          } else {
+            if (typeof window.resetCinematicBloom === 'function') {
+              window.resetCinematicBloom();
+            }
+          }
         }
       }
     });
@@ -475,27 +497,23 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentX = mouseX;
   let currentY = mouseY;
 
+  let heroMoveRaf = null;
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
     if (heroBgImg && window.scrollY < window.innerHeight) {
-      const moveX = (e.clientX - window.innerWidth / 2) * 0.015;
-      const moveY = (e.clientY - window.innerHeight / 2) * 0.015;
-      heroBgImg.style.transform = `scale(1.04) translate(${moveX}px, ${moveY}px)`;
+      if (heroMoveRaf) return;
+      heroMoveRaf = requestAnimationFrame(() => {
+        heroMoveRaf = null;
+        const moveX = (mouseX - window.innerWidth / 2) * 0.015;
+        const moveY = (mouseY - window.innerHeight / 2) * 0.015;
+        heroBgImg.style.transform = `scale(1.04) translate(${moveX}px, ${moveY}px)`;
+      });
     }
   }, { passive: true });
 
-  function animateAmbient() {
-    currentX += (mouseX - currentX) * 0.08;
-    currentY += (mouseY - currentY) * 0.08;
 
-    if (cursorAmbient) {
-      cursorAmbient.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%)`;
-    }
-
-    requestAnimationFrame(animateAmbient);
-  }
 
   // ==========================================================================
   // WebGL Sine Wave Canvas for Card 02 (NYCU x Foxconn)
@@ -1398,81 +1416,729 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // PUBLICATIONS SECTION INTERACTIVITY (Category Filter & BibTeX Copy)
+  // CINEMATIC BLOOM & HORIZONTAL PARALLAX PAPERS TRACK
+  // Strictly adhering to user reference component & specifications
   // ==========================================================================
-  const pubFilterPills = document.querySelectorAll('.pub-filter-pill');
-  const pubCards = document.querySelectorAll('.pub-card');
+  function initCinematicBloom() {
+    const pubSection = document.getElementById("publications");
+    const voidStage = document.getElementById("void-stage");
+    const dialogueText = document.getElementById("dialogue-text");
+    const seedGlow = document.getElementById("seed-glow");
+    const bloomWorld = document.getElementById("bloom-world");
+    const bloomRing = document.getElementById("bloom-ring");
+    const bloomContent = document.getElementById("bloom-content");
+    const bloomedTitle = document.getElementById("bloomedDialogueTitle");
+    const pubHeader = document.getElementById("pubSectionHeader");
+    const skyCanvas = document.getElementById("sky-canvas");
+    const track = document.getElementById("image_track");
 
-  pubFilterPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      pubFilterPills.forEach(p => {
-        p.classList.remove('active');
-        p.setAttribute('aria-selected', 'false');
-      });
-      pill.classList.add('active');
-      pill.setAttribute('aria-selected', 'true');
+    if (!pubSection || !voidStage || !dialogueText) return;
 
-      const filterVal = pill.getAttribute('data-filter');
-      pubCards.forEach(card => {
-        const cat = card.getAttribute('data-category') || '';
-        const cats = cat.split(/\s+/);
-        if (filterVal === 'all' || cats.includes(filterVal)) {
-          card.classList.remove('is-hidden');
-        } else {
-          card.classList.add('is-hidden');
+    const ctx = skyCanvas ? skyCanvas.getContext("2d", { alpha: true }) : null;
+
+    /**
+     * NARRATIVE CONFIGURATION
+     * Single line: "There's more to discover"
+     */
+    const DIALOGUE_LINES = [
+      {
+        text: "There's more to discover",
+        holdDuration: 750, // Snappy cinematic pause before radial blast
+        isClimax: true
+      }
+    ];
+
+    let sequenceTimers = [];
+    let isBloomed = false;
+    let sequenceStarted = false;
+    let isSkyAnimating = false;
+
+    function registerTimer(fn, delay) {
+      const id = setTimeout(fn, delay);
+      sequenceTimers.push(id);
+      return id;
+    }
+
+    function clearAllTimers() {
+      sequenceTimers.forEach(id => clearTimeout(id));
+      sequenceTimers = [];
+    }
+
+    /**
+     * FULL RESET MECHANISM
+     * Allows replay whenever user clicks Publications or scrolls away and returns
+     */
+    function resetCinematicBloom() {
+      clearAllTimers();
+      isBloomed = false;
+      sequenceStarted = false;
+      isSkyAnimating = false;
+
+      document.documentElement.style.setProperty('--bloom-radius', '0px');
+      if (bloomWorld) {
+        bloomWorld.classList.remove('bloom-active');
+      }
+      if (voidStage) {
+        voidStage.style.opacity = '1';
+        voidStage.style.pointerEvents = 'auto';
+      }
+      if (pubHeader) {
+        pubHeader.classList.remove('header-visible');
+      }
+      if (bloomContent) {
+        bloomContent.classList.remove('bloom-content-visible');
+        bloomContent.classList.add('bloom-content-hidden');
+      }
+      if (bloomRing) {
+        bloomRing.classList.remove('ring-animate');
+      }
+      if (dialogueText) {
+        dialogueText.innerHTML = '';
+        dialogueText.classList.remove('climax-ready');
+      }
+      if (seedGlow) {
+        seedGlow.classList.remove('seed-active');
+      }
+    }
+    window.resetCinematicBloom = resetCinematicBloom;
+
+    /**
+     * RENDER FLOATING TEXT WITH STAGGERED LETTER REVEAL
+     */
+    function renderDialogueLine(index = 0) {
+      clearAllTimers();
+      if (isBloomed) return;
+
+      const lineObj = DIALOGUE_LINES[0];
+
+      dialogueText.innerHTML = '';
+      dialogueText.classList.remove('climax-ready');
+      if (seedGlow) seedGlow.classList.remove('seed-active');
+
+      const words = lineObj.text.split(' ');
+      const charSpans = [];
+
+      words.forEach((word, wIdx) => {
+        const wordContainer = document.createElement('span');
+        wordContainer.className = 'inline-block whitespace-nowrap';
+
+        for (let i = 0; i < word.length; i++) {
+          const charSpan = document.createElement('span');
+          charSpan.className = 'char-span';
+          charSpan.textContent = word[i];
+          wordContainer.appendChild(charSpan);
+          charSpans.push(charSpan);
+        }
+
+        dialogueText.appendChild(wordContainer);
+
+        if (wIdx < words.length - 1) {
+          const spaceSpan = document.createElement('span');
+          spaceSpan.className = 'inline-block';
+          spaceSpan.innerHTML = '&nbsp;';
+          dialogueText.appendChild(spaceSpan);
         }
       });
+
+      // Snappy and dramatic stagger (24ms)
+      const charDelay = 24;
+      charSpans.forEach((span, idx) => {
+        registerTimer(() => {
+          span.classList.add('visible');
+        }, 60 + idx * charDelay);
+      });
+
+      const totalRevealTime = 80 + charSpans.length * charDelay;
+
+      registerTimer(() => {
+        dialogueText.classList.add('climax-ready');
+        if (seedGlow) seedGlow.classList.add('seed-active');
+
+        // Automatically trigger radial bloom blast after reading hold
+        registerTimer(() => {
+          if (!isBloomed) {
+            triggerCornflowerBloom();
+          }
+        }, lineObj.holdDuration);
+      }, totalRevealTime);
+    }
+
+    /**
+     * TRIGGER THE RADIAL CORNFLOWER BLUE BLOOM
+     */
+    function triggerCornflowerBloom(originX, originY) {
+      if (isBloomed) return;
+      isBloomed = true;
+      clearAllTimers();
+
+      const rect = dialogueText.getBoundingClientRect();
+      const centerX = (typeof originX === 'number' && originX > 0) ? originX : (rect.left + rect.width / 2 || window.innerWidth / 2);
+      const centerY = (typeof originY === 'number' && originY > 0) ? originY : (rect.top + rect.height / 2 || window.innerHeight / 2);
+
+      const maxDistX = Math.max(centerX, window.innerWidth - centerX);
+      const maxDistY = Math.max(centerY, window.innerHeight - centerY);
+      const fullRadius = Math.hypot(maxDistX, maxDistY) * 1.25;
+
+      document.documentElement.style.setProperty('--bloom-x', `${centerX}px`);
+      document.documentElement.style.setProperty('--bloom-y', `${centerY}px`);
+
+      if (bloomRing) {
+        bloomRing.classList.remove('ring-animate');
+        void bloomRing.offsetWidth;
+        bloomRing.classList.add('ring-animate');
+      }
+
+      spawnBloomBurst(centerX, centerY);
+
+      // Start sky particles only when bloom initiates
+      startSkyAnimation();
+
+      requestAnimationFrame(() => {
+        if (bloomWorld) bloomWorld.classList.add('bloom-active');
+        document.documentElement.style.setProperty('--bloom-radius', `${fullRadius}px`);
+        if (voidStage) {
+          voidStage.style.opacity = '0';
+          voidStage.style.pointerEvents = 'none';
+        }
+      });
+
+      // ONLY show the section title ("02 / Publications & Research") when the bloom animation finishes playing!
+      registerTimer(() => {
+        if (pubHeader) {
+          pubHeader.classList.add('header-visible');
+        }
+        if (bloomContent) {
+          bloomContent.classList.remove('bloom-content-hidden');
+          bloomContent.classList.add('bloom-content-visible');
+        }
+      }, 2300);
+    }
+
+    window.triggerCornflowerBloom = triggerCornflowerBloom;
+    window.renderDialogueLine = renderDialogueLine;
+
+    // Clicking or tapping anywhere on void stage triggers bloom immediately from click/touch point
+    voidStage.addEventListener('click', (e) => {
+      if (isBloomed) return;
+      triggerCornflowerBloom(e.clientX, e.clientY);
     });
-  });
 
-  // BibTeX Database
-  const bibtexEntries = {
-    phong2024classification: `@article{phong2024classification,
-  title={Classification of Plant Leaves and Flowers Using Image Processing and Deep Neural Networks},
-  author={Phong, Bui Hai and Tri, Huynh Minh and Quan, Nguyen Chi Anh and Minh, Nguyen Quang and Chuong, Le Anh},
-  journal={International Journal of Advanced Research in Computer Science},
-  volume={15},
-  number={5},
-  pages={34--37},
-  year={2024},
-  publisher={IJARCS},
-  doi={10.26483/ijarcs.v15i5.7137},
-  url={https://doi.org/10.26483/ijarcs.v15i5.7137}
-}`
-  };
+    voidStage.addEventListener('touchend', (e) => {
+      if (isBloomed) return;
+      const touch = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
+      if (touch) {
+        triggerCornflowerBloom(touch.clientX, touch.clientY);
+      }
+    }, { passive: true });
 
-  const bibtexBtns = document.querySelectorAll('.pub-btn-bibtex');
-  let toastEl = document.querySelector('.bibtex-toast');
-  if (!toastEl) {
-    toastEl = document.createElement('div');
-    toastEl.className = 'bibtex-toast';
-    toastEl.setAttribute('role', 'status');
-    toastEl.setAttribute('aria-live', 'polite');
-    document.body.appendChild(toastEl);
-  }
-
-  function showToast(msg) {
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    setTimeout(() => {
-      toastEl.classList.remove('show');
-    }, 2800);
-  }
-
-  bibtexBtns.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const key = btn.getAttribute('data-bibtex');
-      const entry = bibtexEntries[key];
-      if (entry && navigator.clipboard) {
-        try {
-          await navigator.clipboard.writeText(entry);
-          showToast('✓ BibTeX citation copied to clipboard!');
-        } catch (err) {
-          showToast('Citation ready to copy.');
+    window.addEventListener('keydown', (e) => {
+      if (isBloomed) return;
+      if (e.code === 'Space' || e.code === 'Enter') {
+        const activeSection = document.getElementById("publications");
+        if (!activeSection) return;
+        const rect = activeSection.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+          e.preventDefault();
+          triggerCornflowerBloom();
         }
       }
     });
-  });
+
+    if (bloomedTitle) {
+      bloomedTitle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (bloomRing) {
+          bloomRing.classList.remove('ring-animate');
+          void bloomRing.offsetWidth;
+          bloomRing.classList.add('ring-animate');
+        }
+        spawnBloomBurst(e.clientX || window.innerWidth / 2, e.clientY || 100);
+      });
+    }
+
+    /**
+     * HIGH PERFORMANCE LUMINOUS PARTICLE SYSTEM
+     */
+    let particles = [];
+    let burstParticles = [];
+    const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
+
+    function resizeCanvas() {
+      if (!skyCanvas) return;
+      skyCanvas.width = window.innerWidth;
+      skyCanvas.height = window.innerHeight;
+      if (isBloomed) {
+        const maxRadius = Math.hypot(window.innerWidth, window.innerHeight) * 1.25;
+        document.documentElement.style.setProperty('--bloom-radius', `${maxRadius}px`);
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    window.addEventListener('mousemove', (e) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.active = true;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        pointer.x = e.touches[0].clientX;
+        pointer.y = e.touches[0].clientY;
+        pointer.active = true;
+      }
+    }, { passive: true });
+
+    class SkyParticle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        if (!skyCanvas) return;
+        this.x = Math.random() * skyCanvas.width;
+        this.y = initial ? Math.random() * skyCanvas.height : skyCanvas.height + 25;
+        this.size = Math.random() * 2.8 + 1;
+        this.isBokeh = Math.random() < 0.16;
+        if (this.isBokeh) {
+          this.size = Math.random() * 22 + 10;
+        }
+        this.speedY = -(Math.random() * 0.38 + 0.1);
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.baseAlpha = this.isBokeh ? (Math.random() * 0.12 + 0.04) : (Math.random() * 0.5 + 0.18);
+        this.phase = Math.random() * Math.PI * 2;
+        this.phaseSpeed = Math.random() * 0.02 + 0.008;
+      }
+
+      update() {
+        if (!skyCanvas) return;
+        this.y += this.speedY;
+        this.x += this.speedX + Math.sin(this.phase) * 0.16;
+        this.phase += this.phaseSpeed;
+
+        if (pointer.active && isBloomed) {
+          const dx = this.x - pointer.x;
+          const dy = this.y - pointer.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 140 && dist > 0) {
+            const force = (140 - dist) / 140;
+            this.x += (dx / dist) * force * 1.1;
+            this.y += (dy / dist) * force * 1.1;
+          }
+        }
+
+        if (this.y < -30 || this.x < -30 || this.x > skyCanvas.width + 30) {
+          this.reset(false);
+        }
+      }
+
+      draw() {
+        if (!ctx) return;
+        const twinkle = 0.78 + 0.22 * Math.sin(this.phase);
+        const alpha = this.baseAlpha * twinkle;
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        if (this.isBokeh) {
+          ctx.fillStyle = `rgba(180, 215, 255, ${alpha * 0.6})`;
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        }
+        ctx.fill();
+      }
+    }
+
+    const PARTICLE_COUNT = 38;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new SkyParticle());
+    }
+
+    function spawnBloomBurst(originX, originY) {
+      burstParticles = [];
+      for (let i = 0; i < 40; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8 + 2;
+        burstParticles.push({
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: Math.random() * 3 + 1,
+          alpha: 1,
+          decay: Math.random() * 0.014 + 0.008
+        });
+      }
+    }
+
+    let isPubVisible = true;
+    const pubVisObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        isPubVisible = e.isIntersecting;
+      });
+    }, { threshold: 0.05 });
+    pubVisObserver.observe(pubSection);
+
+    function animateSky() {
+      if (!isSkyAnimating || !ctx || !skyCanvas) return;
+      // Skip canvas operations completely when section is offscreen
+      if (!isPubVisible) {
+        requestAnimationFrame(animateSky);
+        return;
+      }
+      ctx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+
+      for (let i = burstParticles.length - 1; i >= 0; i--) {
+        const bp = burstParticles[i];
+        bp.x += bp.vx;
+        bp.y += bp.vy;
+        bp.vx *= 0.96;
+        bp.vy *= 0.96;
+        bp.alpha -= bp.decay;
+
+        if (bp.alpha <= 0) {
+          burstParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${bp.alpha})`;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animateSky);
+    }
+
+    function startSkyAnimation() {
+      if (!isSkyAnimating) {
+        isSkyAnimating = true;
+        requestAnimationFrame(animateSky);
+      }
+    }
+
+    /**
+     * SCROLL TRIGGER & NAV CLICK SEQUENCE CONTROLLER
+     * ONLY trigger when user scrolls down to Publications or clicks to it!
+     */
+    function startDialogueSequence(force = false) {
+      if (isBloomed && !force) return;
+      if (sequenceStarted && !force) return;
+      if (force) {
+        resetCinematicBloom();
+      }
+      sequenceStarted = true;
+      renderDialogueLine(0);
+    }
+    window.startDialogueSequence = startDialogueSequence;
+
+    // Observe scroll into Publications section
+    const pubScrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+          // Trigger dialogue & bloom ONLY when user scrolls down to Publications!
+          if (!sequenceStarted && !isBloomed) {
+            startDialogueSequence();
+          }
+        } else if (!entry.isIntersecting && entry.intersectionRatio === 0) {
+          // Reset when user leaves Publications so they can re-experience it anytime
+          resetCinematicBloom();
+        }
+      });
+    }, {
+      root: null,
+      threshold: [0, 0.1, 0.25, 0.5]
+    });
+
+    pubScrollObserver.observe(pubSection);
+
+    // Nav link click to Publications: smooth scroll + play animation
+    const pubNavLinks = document.querySelectorAll('.nav-link[data-section="publications"], .nav-link[href="#publications"]');
+    pubNavLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetCinematicBloom();
+        pubSection.scrollIntoView({ behavior: 'smooth' });
+        setActiveNav(link);
+        registerTimer(() => {
+          startDialogueSequence(true);
+        }, 320);
+      });
+    });
+
+    /**
+     * OPTIMIZED HORIZONTAL PARALLAX DRAG & SCROLL
+     * (Throttled via requestAnimationFrame for silky smooth 60/120fps)
+     */
+    if (track) {
+      track.dataset.mouseDownAt = "0";
+      track.dataset.prevPercentage = "0";
+      track.dataset.percentage = "0";
+
+      const trackImages = track.getElementsByClassName("image");
+      let dragRafId = null;
+
+      // Mouse drag handlers
+      const handleOnDown = e => {
+        if (!e) return;
+        if (pubSection && !pubSection.contains(e.target) && e.target !== track) return;
+        if (!isBloomed) return;
+        if (e.target.closest && e.target.closest('.pub-hover-menu')) return;
+        track.dataset.mouseDownAt = String(e.clientX);
+        // Instantaneous 1:1 zero-latency drag tracking
+        track.style.transition = 'none';
+        for (let i = 0; i < trackImages.length; i++) {
+          trackImages[i].style.transition = 'none';
+        }
+      };
+
+      const handleOnUp = () => {
+        if (track.dataset.mouseDownAt === "0") return;
+        track.dataset.mouseDownAt = "0";
+        track.dataset.prevPercentage = track.dataset.percentage || "0";
+        // Restore smooth momentum glide
+        track.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        for (let i = 0; i < trackImages.length; i++) {
+          trackImages[i].style.transition = 'object-position 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        }
+      };
+
+      const handleOnMove = e => {
+        if (!e || track.dataset.mouseDownAt === "0") return;
+        if (!isBloomed) return;
+
+        if (dragRafId) return;
+        dragRafId = requestAnimationFrame(() => {
+          dragRafId = null;
+          const mouseDelta = parseFloat(track.dataset.mouseDownAt) - e.clientX,
+                maxDelta = window.innerWidth / 2;
+
+          const percentage = (mouseDelta / maxDelta) * -100,
+                nextPercentageUnconstrained = parseFloat(track.dataset.prevPercentage || "0") + percentage,
+                nextPercentage = Math.max(Math.min(nextPercentageUnconstrained, 0), -100);
+
+          track.dataset.percentage = String(nextPercentage);
+          track.style.transform = `translate(${nextPercentage}%, -50%)`;
+
+          for (let i = 0; i < trackImages.length; i++) {
+            trackImages[i].style.objectPosition = `${100 + nextPercentage}% center`;
+          }
+        });
+      };
+
+      // =======================================================================
+      // PHASE 2: DIRECTIONAL TOUCH GESTURE LOCKING & FLICK MOMENTUM
+      // Isolates horizontal paper track swiping from native vertical page scroll
+      // =======================================================================
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchStartTime = 0;
+      let lastTouchX = 0;
+      let gestureLocked = null; // null | 'horizontal' | 'vertical'
+
+      const handleTouchStart = e => {
+        if (!e || !e.touches || !e.touches[0]) return;
+        if (!isBloomed) return;
+        const touch = e.touches[0];
+        if (pubSection && !pubSection.contains(e.target) && e.target !== track) return;
+        if (e.target.closest && e.target.closest('.pub-hover-menu')) return;
+
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        lastTouchX = touch.clientX;
+        touchStartTime = performance.now();
+        gestureLocked = null;
+
+        handleOnDown(touch);
+      };
+
+      const handleTouchMove = e => {
+        if (!e || !e.touches || !e.touches[0]) return;
+        if (track.dataset.mouseDownAt === "0" || !isBloomed) return;
+
+        const touch = e.touches[0];
+        const diffX = Math.abs(touch.clientX - touchStartX);
+        const diffY = Math.abs(touch.clientY - touchStartY);
+
+        // Determine intent on first 7px of movement
+        if (gestureLocked === null) {
+          if (diffX > 7 || diffY > 7) {
+            if (diffX >= diffY) {
+              gestureLocked = 'horizontal';
+            } else {
+              gestureLocked = 'vertical';
+              // Release track drag so user can scroll page vertically naturally
+              track.dataset.mouseDownAt = "0";
+              track.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+              return;
+            }
+          } else {
+            return; // Waiting for clear directional threshold
+          }
+        }
+
+        if (gestureLocked === 'vertical') {
+          return;
+        }
+
+        // Horizontal gesture locked: prevent native page scroll collision / rubber-banding
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+
+        lastTouchX = touch.clientX;
+        handleOnMove(touch);
+      };
+
+      const handleTouchEnd = e => {
+        if (track.dataset.mouseDownAt === "0") {
+          gestureLocked = null;
+          return;
+        }
+
+        // Calculate flick velocity if horizontal gesture was active
+        if (gestureLocked === 'horizontal') {
+          const elapsed = Math.max(1, performance.now() - touchStartTime);
+          const totalDeltaX = lastTouchX - touchStartX;
+          const velocity = totalDeltaX / elapsed; // px/ms
+
+          // Apply momentum glide if user flicked with noticeable velocity
+          if (Math.abs(velocity) > 0.32) {
+            const currentPercentage = parseFloat(track.dataset.percentage || "0");
+            const maxDelta = window.innerWidth / 2;
+            const momentumOffset = (velocity * 280 / maxDelta) * 100;
+            const targetPercentage = Math.max(Math.min(currentPercentage + momentumOffset, 0), -100);
+
+            track.dataset.percentage = String(targetPercentage);
+            track.dataset.prevPercentage = String(targetPercentage);
+
+            track.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            track.style.transform = `translate(${targetPercentage}%, -50%)`;
+
+            for (let i = 0; i < trackImages.length; i++) {
+              trackImages[i].style.transition = 'object-position 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+              trackImages[i].style.objectPosition = `${100 + targetPercentage}% center`;
+            }
+
+            track.dataset.mouseDownAt = "0";
+            gestureLocked = null;
+            return;
+          }
+        }
+
+        gestureLocked = null;
+        handleOnUp();
+      };
+
+      // Desktop mouse drag listeners
+      window.addEventListener("mousedown", e => handleOnDown(e));
+      window.addEventListener("mouseup", () => handleOnUp());
+      window.addEventListener("mousemove", e => handleOnMove(e));
+
+      // Mobile touch listeners (gesture locked & non-passive when horizontal)
+      track.addEventListener("touchstart", handleTouchStart, { passive: true });
+      track.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("touchend", handleTouchEnd, { passive: true });
+      window.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+
+      let wheelRafId = null;
+      pubSection.addEventListener("wheel", e => {
+        if (!isBloomed) return;
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : e.deltaY * 0.6);
+        if (delta !== 0) {
+          if (wheelRafId) return;
+          wheelRafId = requestAnimationFrame(() => {
+            wheelRafId = null;
+            const current = parseFloat(track.dataset.percentage || "0");
+            const nextPercentage = Math.max(Math.min(current - (delta * 0.04), 0), -100);
+            track.dataset.percentage = String(nextPercentage);
+            track.dataset.prevPercentage = String(nextPercentage);
+            track.style.transform = `translate(${nextPercentage}%, -50%)`;
+            for (let i = 0; i < trackImages.length; i++) {
+              trackImages[i].style.objectPosition = `${100 + nextPercentage}% center`;
+            }
+          });
+        }
+      }, { passive: true });
+    }
+
+    /**
+     * LIQUID GLASS HOVER MENU ACTIONS
+     */
+    const papersData = [
+      { bibtex: "@article{phong2024classification,\n  title={Classification of Plant Leaves and Flowers Using Image Processing and Deep Neural Networks},\n  author={Phong, Bui Hai and Tri, Huynh Minh and Quan, Nguyen Chi Anh and Minh, Nguyen Quang and Chuong, Le Anh},\n  journal={IJARCS},\n  volume={15},\n  number={5},\n  pages={34--37},\n  year={2024},\n  doi={10.26483/ijarcs.v15i5.7137}\n}" },
+      { bibtex: "@article{nguyen2025trapping,\n  title={Trapping Kinetics in GaN/SiC Power Transistors},\n  author={Nguyen, Quan},\n  journal={Forthcoming},\n  year={2025}\n}" },
+      { bibtex: "@inproceedings{nguyen2025cryogenic,\n  title={Cryogenic Dynamic On-Resistance Characterization},\n  author={Nguyen, Quan},\n  booktitle={APEC},\n  year={2025}\n}" },
+      { bibtex: "@techreport{nguyen2024resilient,\n  title={Resilient Embedded Architectures for GaN Gate Drives},\n  author={Nguyen, Quan},\n  year={2024}\n}" },
+      { bibtex: "@article{phong2024multispectral,\n  title={Multi-Spectral Botanical Phenotyping},\n  author={Phong, Bui Hai and Nguyen, Quan},\n  year={2024}\n}" },
+      { bibtex: "@article{nguyen2025uhf,\n  title={Ultra-High Frequency 13.56 MHz GaN Inverter Topologies},\n  author={Nguyen, Quan},\n  year={2025}\n}" },
+      { bibtex: "@article{nguyen2025radiation,\n  title={Radiation Hardening in Compound Semiconductors},\n  author={Nguyen, Quan},\n  year={2025}\n}" }
+    ];
+
+    document.querySelectorAll('.pub-hover-menu .more-button').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = this.closest('.pub-hover-menu');
+        document.querySelectorAll('.pub-hover-menu.active').forEach(m => {
+          if (m !== container) m.classList.remove('active');
+        });
+        container.classList.toggle('active');
+      });
+    });
+
+    document.querySelectorAll('.pub-hover-menu .more-button-list-item').forEach(item => {
+      item.addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const action = this.dataset.action;
+        const paperId = parseInt(this.dataset.paperId || this.closest('.pub-hover-menu').dataset.paperId);
+
+        if (action === 'doi' || action === 'venue') {
+          const url = this.dataset.url;
+          if (url) window.open(url, '_blank', 'noopener,noreferrer');
+        } else if (action === 'bibtex') {
+          const data = papersData[paperId];
+          if (data && data.bibtex) {
+            try {
+              await navigator.clipboard.writeText(data.bibtex);
+            } catch {
+              const ta = document.createElement('textarea');
+              ta.value = data.bibtex;
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              document.body.removeChild(ta);
+            }
+            const span = this.querySelector('span');
+            const orig = span.textContent;
+            span.textContent = 'Copied!';
+            setTimeout(() => { span.textContent = orig; }, 2000);
+          }
+        } else if (action === 'read') {
+          if (paperId === 0) {
+            window.open('https://doi.org/10.26483/ijarcs.v15i5.7137', '_blank', 'noopener,noreferrer');
+          } else {
+            const span = this.querySelector('span');
+            const orig = span.textContent;
+            span.textContent = 'Forthcoming';
+            setTimeout(() => { span.textContent = orig; }, 1500);
+          }
+        }
+
+        this.closest('.pub-hover-menu').classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.pub-hover-menu.active').forEach(m => m.classList.remove('active'));
+    });
+  }
+  initCinematicBloom();
+
 
   // ==========================================================================
   // HERO ROTATING TEXT COMPONENT
@@ -1823,7 +2489,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initProjectFeatureShowcase();
   initRotatingText();
   initBlueBellDialogue();
-  animateAmbient();
 
   // ==========================================================================
   // THE ABYSS SHRINE: SCROLL-DRIVEN BLUE BELL & TELEPORT DIALOGUE
@@ -2063,33 +2728,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Scroll-driven trigger: As user scrolls past Info into Abyss
     if (abyssSec) {
+      let abyssScrollRaf = null;
       const handleAbyssScroll = () => {
-        const rect = abyssSec.getBoundingClientRect();
-        const winHeight = window.innerHeight;
+        if (abyssScrollRaf) return;
+        abyssScrollRaf = requestAnimationFrame(() => {
+          abyssScrollRaf = null;
+          const rect = abyssSec.getBoundingClientRect();
+          const winHeight = window.innerHeight;
 
-        // Progress of abyss entering the viewport
-        if (rect.top <= winHeight && rect.bottom >= 0) {
-          const progress = Math.min(1, Math.max(0, (winHeight - rect.top) / (winHeight * 0.75)));
+          if (rect.top <= winHeight && rect.bottom >= 0) {
+            const progress = Math.min(1, Math.max(0, (winHeight - rect.top) / (winHeight * 0.75)));
 
-          // Header fades out as darkness envelops the page
-          if (siteHeader) {
-            siteHeader.style.opacity = `${Math.max(0, 1 - progress * 1.5)}`;
-            siteHeader.style.pointerEvents = progress > 0.4 ? 'none' : 'auto';
+            if (siteHeader) {
+              siteHeader.style.opacity = `${Math.max(0, 1 - progress * 1.5)}`;
+              siteHeader.style.pointerEvents = progress > 0.4 ? 'none' : 'auto';
+            }
+
+            const yOffset = (1 - progress) * -60;
+            bellContainer.style.transform = `translateY(${yOffset}px)`;
+            bellContainer.style.opacity = `${0.2 + progress * 0.8}`;
+          } else if (rect.top > winHeight) {
+            if (siteHeader) {
+              siteHeader.style.opacity = '';
+              siteHeader.style.pointerEvents = '';
+            }
+            bellContainer.style.transform = `translateY(-60px)`;
+            bellContainer.style.opacity = '0.2';
           }
-
-          // Bell gently slides down into view
-          const yOffset = (1 - progress) * -60;
-          bellContainer.style.transform = `translateY(${yOffset}px)`;
-          bellContainer.style.opacity = `${0.2 + progress * 0.8}`;
-        } else if (rect.top > winHeight) {
-          // Reset header when scrolled above abyss
-          if (siteHeader) {
-            siteHeader.style.opacity = '';
-            siteHeader.style.pointerEvents = '';
-          }
-          bellContainer.style.transform = `translateY(-60px)`;
-          bellContainer.style.opacity = '0.2';
-        }
+        });
       };
 
       window.addEventListener('scroll', handleAbyssScroll, { passive: true });
